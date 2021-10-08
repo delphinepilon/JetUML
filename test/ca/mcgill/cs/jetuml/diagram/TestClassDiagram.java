@@ -70,6 +70,10 @@ public class TestClassDiagram
 		aEdge1 = new DependencyEdge();
 		aEdge2 = new DependencyEdge();
 		aEdge3 = new DependencyEdge();
+		
+		aClassNode1.setName("Class1");
+		aClassNode2.setName("Class2");
+		aClassNode3.setName("Class3");
 	}
 	
 	@Test

@@ -22,6 +22,7 @@ package ca.mcgill.cs.jetuml.diagram.nodes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -110,5 +111,84 @@ public class TestCallNode
 	public void testAllowsChildren()
 	{
 		assertFalse(aNode.allowsChildren());
+	}
+	
+	@Test
+	public void testCallNodeEqualsItself()
+	{
+		assertEquals(aNode, aNode);
+		assertEquals(aNode.hashCode(), aNode.hashCode());
+	}
+	
+	@Test
+	public void testCallNodeEqualsItsClone()
+	{
+		assertEquals(aNode, aNode.clone());
+		assertEquals(aNode.hashCode(), aNode.clone().hashCode());
+	}
+	
+	@Test
+	public void testCallNodeEqualsAnotherCallNode()
+	{
+		CallNode node2 = new CallNode();
+		assertEquals(aNode, node2);
+		assertEquals(aNode.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testCallNodeNotEqualsNull()
+	{
+		assertNotEquals(aNode, null);
+	}
+	
+	@Test
+	public void testCallNodeNotEqualsString()
+	{
+		String anyString = "anystring";
+		assertNotEquals(aNode, anyString);
+		assertNotEquals(aNode.hashCode(), anyString.hashCode());
+	}
+	
+	@Test
+	public void testCallNodeNotEqualsAnotherNodeTranslated()
+	{
+		CallNode node2 = new CallNode();
+		node2.translate(200, 0);
+		assertNotEquals(aNode, node2);
+		assertNotEquals(aNode.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testCallNodeNotEqualsAnotherNodeWithOpenBottom()
+	{
+		CallNode node2 = new CallNode();
+		node2.setOpenBottom(true);
+		assertNotEquals(aNode, node2);
+		assertNotEquals(aNode.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testCallNodeEqualsAnotherNodeWithSameParent()
+	{
+		ImplicitParameterNode implicitParameterNode = new ImplicitParameterNode();
+		CallNode node2 = new CallNode();
+		aNode.link(implicitParameterNode);
+		node2.link(implicitParameterNode);
+		assertEquals(aNode, node2);
+		assertEquals(aNode.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testCallNodeNotEqualsAnotherNodeWithDifferentParent()
+	{
+		ImplicitParameterNode implicitParameterNode1 = new ImplicitParameterNode();
+		ImplicitParameterNode implicitParameterNode2 = new ImplicitParameterNode();
+		CallNode node2 = new CallNode();
+		implicitParameterNode1.setName("IPN1");
+		implicitParameterNode2.setName("IPN2");
+		aNode.link(implicitParameterNode1);
+		node2.link(implicitParameterNode2);
+		assertEquals(aNode, node2);
+		assertEquals(aNode.hashCode(), node2.hashCode());
 	}
 }

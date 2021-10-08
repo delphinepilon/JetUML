@@ -66,6 +66,11 @@ public class TestSerializationContext
 		aPackage1.addChild(aPackage2);
 		aPackage1.addChild(aClassNode2);
 		aPackage2.addChild(aClassNode3);
+		aClassNode1.setName("Class1");
+		aClassNode2.setName("Class2");
+		aClassNode3.setName("Class3");
+		aPackage1.setName("Package1");
+		aPackage2.setName("Package2");
 	}
 	
 	private void loadNodes()

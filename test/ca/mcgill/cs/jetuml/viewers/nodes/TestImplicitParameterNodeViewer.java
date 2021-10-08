@@ -81,6 +81,9 @@ public class TestImplicitParameterNodeViewer
 		aCallEdge1 = new CallEdge();
 		aConstructorEdge1 = new ConstructorEdge();
 		aConstructorEdge2 = new ConstructorEdge();
+		aImplicitParameterNode1.setName("IPN1");
+		aImplicitParameterNode2.setName("IPN2");
+		aImplicitParameterNode3.setName("IPN3");
 	}
 	
 	@AfterAll

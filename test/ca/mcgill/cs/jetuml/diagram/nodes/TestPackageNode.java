@@ -22,6 +22,7 @@ package ca.mcgill.cs.jetuml.diagram.nodes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -141,5 +142,92 @@ public class TestPackageNode
 		ClassNode c2Clone = (ClassNode) p2Clone.getChildren().get(1);
 		assertEquals("c2", c2Clone.getName().toString());
 		assertFalse(c2Clone == aClass2);
+	}
+	
+	@Test
+	public void testPackageNodeEqualsItself()
+	{
+		assertEquals(aPackage1, aPackage1);
+		assertEquals(aPackage1.hashCode(), aPackage1.hashCode());
+	}
+	
+	@Test
+	public void testPackageNodeEqualsItsClone()
+	{
+		assertEquals(aPackage1, aPackage1.clone());
+		assertEquals(aPackage1.hashCode(), aPackage1.clone().hashCode());
+	}
+	
+	@Test
+	public void testPackageNodeEqualsAnotherNode()
+	{
+		assertEquals(aPackage1, aPackage2);
+		assertEquals(aPackage1.hashCode(), aPackage2.hashCode());
+	}
+	
+	@Test
+	public void testPackageNodeNotEqualsNull()
+	{
+		assertNotEquals(aPackage1, null);
+	}
+	
+	@Test
+	public void testPackageNodeNotEqualsString()
+	{
+		String anyString = "anystring";
+		assertNotEquals(aPackage1, anyString);
+		assertNotEquals(aPackage1.hashCode(), anyString.hashCode());
+	}
+	
+	@Test
+	public void testPackageNodeNotEqualsAnotherNodeTranslated()
+	{
+		aPackage2.translate(200, 0);
+		assertNotEquals(aPackage1, aPackage2);
+		assertNotEquals(aPackage1.hashCode(), aPackage2.hashCode());
+	}
+	
+	@Test
+	public void testPackageNodeNotEqualsAnotherNodeWithDifferentName()
+	{
+		aPackage1.setName("package1");
+		aPackage2.setName("package2");
+		assertNotEquals(aPackage1, aPackage2);
+		assertNotEquals(aPackage1.hashCode(), aPackage2.hashCode());
+	}
+	
+	@Test
+	public void testPackageNodeEqualsAnotherNodeWithSameChildren()
+	{
+		ClassNode class1 = new ClassNode();
+		ClassNode class2 = new ClassNode();
+		aPackage1.addChild(class1);
+		aPackage2.addChild(class2);
+		assertEquals(aPackage1, aPackage2);
+		assertEquals(aPackage1.hashCode(), aPackage2.hashCode());
+	}
+	
+	@Test
+	public void testPackageNodeNotEqualsAnotherNodeWithDifferentChildren()
+	{
+		ClassNode classNode = new ClassNode();
+		InterfaceNode interfaceNode = new InterfaceNode();
+		aPackage1.addChild(classNode);
+		aPackage2.addChild(interfaceNode);
+		assertNotEquals(aPackage1, aPackage2);
+		assertNotEquals(aPackage1.hashCode(), aPackage2.hashCode());
+	}
+	
+	@Test
+	public void testPackageNodeNotEqualsAnotherNodeWithDifferentNumberOfChildren()
+	{
+		ClassNode classNode = new ClassNode();
+		InterfaceNode interfaceNode1 = new InterfaceNode();
+		InterfaceNode interfaceNode2 = new InterfaceNode();
+		aPackage1.addChild(classNode);
+		aPackage2.addChild(interfaceNode1);
+		aPackage2.addChild(interfaceNode2);
+		assertNotEquals(aPackage1, aPackage2);
+		assertNotEquals(aPackage1.hashCode(), aPackage2.hashCode());
 	}
 }

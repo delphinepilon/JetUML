@@ -77,4 +77,48 @@ public class Property
 		assert pValue != null;
 		aSetter.accept(pValue);
 	}
+	
+	@Override
+	public boolean equals(Object pObject)
+	{
+		if (pObject == null)
+		{
+			return false;
+		}
+		else if (pObject == this)
+		{
+			return true;
+		}
+		else if (pObject.getClass() != getClass())
+		{
+			return false;
+		}
+		else 
+		{
+			Property property = (Property)pObject;
+			
+			if (!property.aName.equals(aName))
+			{
+				return false;
+			}
+			if (!property.get().equals(get()))
+			{
+				return false;
+			}
+			
+			return true;
+		}
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int hash = aName.hashCode();
+		if (get().hashCode() != 0)
+		{
+			hash = hash * get().hashCode();
+		}
+		return prime * hash;
+	}
 }

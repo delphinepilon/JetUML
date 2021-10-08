@@ -96,4 +96,57 @@ public final class PackageNode extends AbstractPackageNode
 	{
 		return true;
 	}
+	
+	@Override
+	public boolean equals(Object pObject)
+	{
+		if (pObject == null)
+		{
+			return false;
+		}
+		else if (pObject == this)
+		{
+			return true;
+		}
+		else if (pObject.getClass() != getClass())
+		{
+			return false;
+		}
+		else if (!super.equals(pObject))
+		{
+			return false;
+		}
+		else
+		{
+			PackageNode packageNode = (PackageNode)pObject;
+			List<Node> children = getChildren();
+			if (children.size() != packageNode.getChildren().size())
+			{
+				return false;
+			}
+			for (Node child : children)
+			{
+				if (!packageNode.getChildren().contains(child))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	
+	@Override 
+	public int hashCode()
+	{
+		int hash = 1;
+		List<Node> children = getChildren();
+		for (Node child : children)
+		{
+			if (child.hashCode() != 0)
+			{
+				hash = hash * child.hashCode();
+			}
+		}
+		return hash * super.hashCode();
+	}
 }

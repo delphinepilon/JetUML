@@ -98,4 +98,53 @@ public class Properties implements Iterable<Property>
 	{
 		return Collections.unmodifiableCollection(aProperties.values()).iterator();
 	}
+	
+	@Override
+	public boolean equals(Object pObject)
+	{
+		if (pObject == null)
+		{
+			return false;
+		}
+		else if (pObject == this)
+		{
+			return true;
+		}
+		else if (pObject.getClass() != getClass())
+		{
+			return false;
+		}
+		else
+		{
+			Properties properties = (Properties)pObject;
+			if (properties.aProperties.size() != aProperties.size())
+			{
+				return false;
+			}
+			for (PropertyName propertyName : aProperties.keySet())
+			{
+				if (!properties.aProperties.containsKey(propertyName) || 
+						!properties.aProperties.get(propertyName).equals(aProperties.get(propertyName)))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int hash = 1;
+		for (Property property : aProperties.values())
+		{
+			if (property.hashCode() != 0)
+			{
+				hash = hash * property.hashCode();
+			}
+		}
+		return prime * hash;
+	}
 }

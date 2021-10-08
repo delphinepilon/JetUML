@@ -22,6 +22,7 @@ package ca.mcgill.cs.jetuml.diagram.nodes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -97,5 +98,91 @@ public class TestClassNode
 	public void testRequiresParent()
 	{
 		assertFalse(aNode1.requiresParent());
+	}
+	
+	@Test
+	public void testClassNodeEqualsItself()
+	{
+		assertEquals(aNode1, aNode1);
+		assertEquals(aNode1.hashCode(), aNode1.hashCode());
+	}
+	
+	@Test
+	public void testClassNodeEqualsItsClone()
+	{
+		assertEquals(aNode1, aNode1.clone());
+		assertEquals(aNode1.hashCode(), aNode1.clone().hashCode());
+	}
+	
+	@Test
+	public void testClassNodeEqualsAnotherNode()
+	{
+		ClassNode node2 = new ClassNode();
+		assertEquals(aNode1, node2);
+		assertEquals(aNode1.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testClassNodeEqualsAnotherNodeWithSameMethods()
+	{
+		String methods = "anymethods";
+		ClassNode node2 = new ClassNode();
+		aNode1.setMethods(methods);
+		node2.setMethods(methods);
+		assertEquals(aNode1, node2);
+		assertEquals(aNode1.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testClassNodeNotEqualsNull()
+	{
+		assertNotEquals(aNode1, null);
+	}
+	
+	@Test
+	public void testClassNodeNotEqualsString()
+	{
+		String anyString = "anystring";
+		assertNotEquals(aNode1, anyString);
+		assertNotEquals(aNode1.hashCode(), anyString.hashCode());
+	}
+	
+	@Test
+	public void testClassNodeNotEqualsAnotherNodeTranslated()
+	{
+		ClassNode node2 = new ClassNode();
+		node2.translate(200, 0);
+		assertNotEquals(aNode1, node2);
+		assertNotEquals(aNode1.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testClassNodeNotEqualsAnotherNodeWithDifferentName()
+	{
+		ClassNode node2 = new ClassNode();
+		aNode1.setName("Class1");
+		node2.setName("Class2");
+		assertNotEquals(aNode1, node2);
+		assertNotEquals(aNode1.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testClassNodeNotEqualsAnotherNodeWithDifferentAttributes()
+	{
+		ClassNode node2 = new ClassNode();
+		aNode1.setAttributes("Attribute1");
+		node2.setAttributes("Attribute2");
+		assertNotEquals(aNode1, node2);
+		assertNotEquals(aNode1.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testClassNodeNotEqualsAnotherNodeWithDifferentMethods()
+	{
+		ClassNode node2 = new ClassNode();
+		aNode1.setMethods("Method1");
+		node2.setMethods("Method2");
+		assertNotEquals(aNode1, node2);
+		assertNotEquals(aNode1.hashCode(), node2.hashCode());
 	}
 }

@@ -75,6 +75,10 @@ public class TestSelectionModel
 		aPackage2 = new PackageNode();
 		aModel = new SelectionModel( () -> {});
 		aClassDiagram = new Diagram(DiagramType.CLASS);
+		aNode1.setName("Node1");
+		aNode2.setName("Node2");
+		aPackage1.setName("Package1");
+		aPackage2.setName("Package2");
 	}
 	
 	private int size()

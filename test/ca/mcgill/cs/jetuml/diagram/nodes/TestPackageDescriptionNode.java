@@ -22,6 +22,7 @@ package ca.mcgill.cs.jetuml.diagram.nodes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -95,5 +96,70 @@ public class TestPackageDescriptionNode
 		assertEquals("Name", clone.getName());
 		assertEquals("Contents", clone.getContents());
 		assertSame(aPackageNode, clone.getParent());
+	}
+	
+	@Test
+	public void testPackageDescriptionNodeEqualsItself()
+	{
+		assertEquals(aPackageDescriptionNode, aPackageDescriptionNode);
+		assertEquals(aPackageDescriptionNode.hashCode(), aPackageDescriptionNode.hashCode());
+	}
+	
+	@Test
+	public void testPackageDescriptionNodeEqualsItsClone()
+	{
+		assertEquals(aPackageDescriptionNode, aPackageDescriptionNode.clone());
+		assertEquals(aPackageDescriptionNode.hashCode(), aPackageDescriptionNode.clone().hashCode());
+	}
+	
+	@Test
+	public void testPackageDescriptionNodeEqualsAnotherNode()
+	{
+		PackageDescriptionNode packageDescriptionNode2 = new PackageDescriptionNode();
+		assertEquals(aPackageDescriptionNode, packageDescriptionNode2);
+		assertEquals(aPackageDescriptionNode.hashCode(), packageDescriptionNode2.hashCode());
+	}
+	
+	@Test
+	public void testPackageDescriptionNodeNotEqualsNull()
+	{
+		assertNotEquals(aPackageDescriptionNode, null);
+	}
+	
+	@Test
+	public void testPackageDescriptionNodeNotEqualsString()
+	{
+		String anyString = "anystring";
+		assertNotEquals(aPackageDescriptionNode, anyString);
+		assertNotEquals(aPackageDescriptionNode.hashCode(), anyString.hashCode());
+	}
+	
+	@Test
+	public void testPackageDescriptionNodeNotEqualsAnotherNodeTranslated()
+	{
+		PackageDescriptionNode packageDescriptionNode2 = new PackageDescriptionNode();
+		packageDescriptionNode2.translate(200, 0);
+		assertNotEquals(aPackageDescriptionNode, packageDescriptionNode2);
+		assertNotEquals(aPackageDescriptionNode.hashCode(), packageDescriptionNode2.hashCode());
+	}
+	
+	@Test
+	public void testPackageDescriptionNodeNotEqualsAnotherNodeWithDifferentName()
+	{
+		PackageDescriptionNode packageDescriptionNode2 = new PackageDescriptionNode();
+		aPackageDescriptionNode.setName("Name1");
+		packageDescriptionNode2.setName("Name2");
+		assertNotEquals(aPackageDescriptionNode, packageDescriptionNode2);
+		assertNotEquals(aPackageDescriptionNode.hashCode(), packageDescriptionNode2.hashCode());
+	}
+	
+	@Test
+	public void testPackageDescriptionNodeNotEqualsAnotherNodeWithDifferentContent()
+	{
+		PackageDescriptionNode packageDescriptionNode2 = new PackageDescriptionNode();
+		aPackageDescriptionNode.setContents("Content1");
+		packageDescriptionNode2.setContents("Content2");
+		assertNotEquals(aPackageDescriptionNode, packageDescriptionNode2);
+		assertNotEquals(aPackageDescriptionNode.hashCode(), packageDescriptionNode2.hashCode());
 	}
 }

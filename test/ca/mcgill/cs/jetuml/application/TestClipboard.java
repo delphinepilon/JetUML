@@ -21,7 +21,6 @@
 package ca.mcgill.cs.jetuml.application;
 
 import static ca.mcgill.cs.jetuml.testutils.CollectionAssertions.assertThat;
-import static ca.mcgill.cs.jetuml.testutils.CollectionAssertions.doesNotContain;
 import static ca.mcgill.cs.jetuml.testutils.CollectionAssertions.extract;
 import static ca.mcgill.cs.jetuml.testutils.CollectionAssertions.hasElementsEqualTo;
 import static ca.mcgill.cs.jetuml.testutils.CollectionAssertions.hasElementsSameAs;
@@ -119,7 +118,6 @@ public class TestClipboard
 		aClipboard.copy(Arrays.asList(aNode1));
 		List<Node> clipboardNodes = getClipboardNodes();
 		assertThat(extract(clipboardNodes, Node::position), hasElementsEqualTo, new Point(0,0));
-		assertThat(clipboardNodes, doesNotContain, aNode1 ); // Because it's a clone
 	}
 	
 	@Test
@@ -129,7 +127,6 @@ public class TestClipboard
 		aClipboard.copy(Arrays.asList(aNode1));
 		List<Node> clipboardNodes = getClipboardNodes();
 		assertThat(extract(clipboardNodes, Node::position), hasElementsEqualTo, new Point(10,10));
-		assertThat(clipboardNodes, doesNotContain, aNode1); // Because it's a clone
 	}
 	
 	@Test

@@ -25,6 +25,7 @@ import static ca.mcgill.cs.jetuml.testutils.CollectionAssertions.extract;
 import static ca.mcgill.cs.jetuml.testutils.CollectionAssertions.hasElementsEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Iterator;
@@ -37,14 +38,14 @@ import org.junit.jupiter.api.Test;
 
 public class TestProperties
 {
-	static class Stub { String aValue = ""; }
+	class Stub { String aValue; Stub(String pValue) { aValue = pValue; } }
 	private Stub aStub;
 	private Properties aProperties;
 	
 	@BeforeEach
 	public void setup()
 	{
-		aStub = new Stub();
+		aStub = new Stub("");
 		aProperties = new Properties();
 	}
 	
@@ -149,6 +150,61 @@ public class TestProperties
 		aProperties.addAt(PropertyName.DIRECTIONALITY, () -> aStub.aValue, val -> aStub.aValue = (String) val, 1);
 		aProperties.add(PropertyName.END_LABEL, () -> aStub.aValue, val -> aStub.aValue = (String) val);
 		assertThat(extract(getProperties(), Property::name), hasElementsEqualTo, PropertyName.ATTRIBUTES, PropertyName.DIRECTIONALITY, PropertyName.CONTENTS, PropertyName.END_LABEL);
+	}
+	
+	@Test
+	public void testPropertiesEqualsItself()
+	{
+		assertEquals(aProperties, aProperties);
+		assertEquals(aProperties.hashCode(), aProperties.hashCode());
+		aProperties.add(PropertyName.ATTRIBUTES, () -> aStub.aValue, val -> aStub.aValue = (String) val);
+		assertEquals(aProperties, aProperties);
+		assertEquals(aProperties.hashCode(), aProperties.hashCode());
+	}
+	
+	@Test
+	public void testPropertiesNotEqualsNull()
+	{
+		assertNotEquals(aProperties, null);
+	}
+	
+	@Test
+	public void testPropertiesNotEqualsString()
+	{
+		String anyString = "anystring";
+		assertNotEquals(aProperties, anyString);
+		assertNotEquals(aProperties.hashCode(), anyString.hashCode());
+	}
+	
+	@Test
+	public void testPropertiesEqualsAnotherPropertiesWithSameProperties()
+	{
+		Properties properties2 = new Properties();
+		aProperties.add(PropertyName.ATTRIBUTES, () -> aStub.aValue, val -> aStub.aValue = (String) val);
+		properties2.add(PropertyName.ATTRIBUTES, () -> aStub.aValue, val -> aStub.aValue = (String) val);
+		assertEquals(aProperties, properties2);
+		assertEquals(aProperties.hashCode(), properties2.hashCode());
+	}
+	
+	@Test
+	public void testPropertiesNotEqualsAnotherPropertiesWithDifferentProperties()
+	{
+		Properties properties2 = new Properties();
+		Stub stub2 = new Stub("newValue");
+		aProperties.add(PropertyName.ATTRIBUTES, () -> aStub.aValue, val -> aStub.aValue = (String) val);
+		properties2.add(PropertyName.ATTRIBUTES, () -> stub2.aValue, val -> stub2.aValue = (String) val);
+		assertNotEquals(aProperties, properties2);
+		assertNotEquals(aProperties.hashCode(), properties2.hashCode());
+	}
+	
+	@Test
+	public void testPropertiesNotEqualsAnotherPropertiesWithDifferentPropertyNames()
+	{
+		Properties properties2 = new Properties();
+		aProperties.add(PropertyName.ATTRIBUTES, () -> aStub.aValue, val -> aStub.aValue = (String) val);
+		properties2.add(PropertyName.CONTENTS, () -> aStub.aValue, val -> aStub.aValue = (String) val);
+		assertNotEquals(aProperties, properties2);
+		assertNotEquals(aProperties.hashCode(), properties2.hashCode());
 	}
 	
 	private int size()

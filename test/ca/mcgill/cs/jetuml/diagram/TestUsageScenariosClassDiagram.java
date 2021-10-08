@@ -35,6 +35,7 @@ import ca.mcgill.cs.jetuml.diagram.edges.AggregationEdge;
 import ca.mcgill.cs.jetuml.diagram.edges.AssociationEdge;
 import ca.mcgill.cs.jetuml.diagram.edges.DependencyEdge;
 import ca.mcgill.cs.jetuml.diagram.edges.GeneralizationEdge;
+import ca.mcgill.cs.jetuml.diagram.edges.GeneralizationEdge.Type;
 import ca.mcgill.cs.jetuml.diagram.edges.NoteEdge;
 import ca.mcgill.cs.jetuml.diagram.nodes.ClassNode;
 import ca.mcgill.cs.jetuml.diagram.nodes.InterfaceNode;
@@ -357,6 +358,10 @@ public class TestUsageScenariosClassDiagram extends AbstractTestUsageScenarios
 		AssociationEdge aSecondAssociationEdge = new AssociationEdge();
 		DependencyEdge aSecondDependencyEdge = new DependencyEdge();
 		GeneralizationEdge aSecondGeneralizationEdge = new GeneralizationEdge();
+		aSecondAggregationEdge.setMiddleLabel("label1");
+		aSecondAssociationEdge.setMiddleLabel("label2");
+		aSecondDependencyEdge.setMiddleLabel("label3");
+		aSecondGeneralizationEdge.setType(Type.Implementation);
 		
 		addNode(aClassNode1, new Point(5, 5));
 		addNode(aInterfaceNode, new Point(44, 44));

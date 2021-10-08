@@ -160,4 +160,36 @@ public abstract class AbstractNode extends AbstractDiagramElement implements Nod
 		removeChild(pNode);
 		addChild(pNode);
 	}
+	
+	@Override
+	public boolean equals(Object pObject)
+	{
+		if (pObject == null)
+		{
+			return false;
+		}
+		else if (pObject == this)
+		{
+			return true;
+		}
+		else if (pObject.getClass() != getClass())
+		{
+			return false;
+		}
+		else if (!super.equals(pObject))
+		{
+			return false;
+		}
+		else 
+		{
+			AbstractNode abstractNode = (AbstractNode)pObject;
+			return abstractNode.position().equals(position());
+		}
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return getClass().getSimpleName().hashCode() * position().hashCode() * super.hashCode();
+	}
 }

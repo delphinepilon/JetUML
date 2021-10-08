@@ -78,4 +78,49 @@ public abstract class AbstractEdge extends AbstractDiagramElement implements Edg
 		}
 		return result;
 	}
+	
+	@Override
+	public boolean equals(Object pObject)
+	{
+		if (pObject == null)
+		{
+			return false;
+		}
+		else if (pObject == this)
+		{
+			return true;
+		}
+		else if (pObject.getClass() != getClass())
+		{
+			return false;
+		}
+		else if (!super.equals(pObject))
+		{
+			return false;
+		}
+		else
+		{
+			AbstractEdge abstractEdge = (AbstractEdge)pObject;
+			if (aStart != null && aEnd != null && abstractEdge.aStart != null && abstractEdge.aEnd != null)
+			{
+				return abstractEdge.aStart.equals(aStart) && abstractEdge.aEnd.equals(aEnd);
+			}
+			return true;
+		}
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		if (aStart != null && aStart.hashCode() != 0)
+		{
+			hash = hash * aStart.hashCode();
+		}
+		if (aEnd != null && aEnd.hashCode() != 0)
+		{
+			hash = hash * aEnd.hashCode();
+		}
+		return hash * super.hashCode();
+	}
 }

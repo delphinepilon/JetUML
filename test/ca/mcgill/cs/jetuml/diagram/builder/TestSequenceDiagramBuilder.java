@@ -246,6 +246,7 @@ public class TestSequenceDiagramBuilder
 	@Test
 	public void testGetCoRemovals()
 	{
+		aDefaultCallNode2.translate(100, 100);
 		aCallEdge1.connect(aDefaultCallNode1, aDefaultCallNode2, aDiagram);
 		aDiagram.addEdge(aCallEdge1);
 		aDiagram.addRootNode(aDefaultCallNode1);

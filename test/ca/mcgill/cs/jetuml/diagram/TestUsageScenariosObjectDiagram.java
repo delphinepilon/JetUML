@@ -57,6 +57,11 @@ public class TestUsageScenariosObjectDiagram extends AbstractTestUsageScenarios
 		aFieldNode3 = new FieldNode();
 		aReferenceEdge1 = new ObjectReferenceEdge();
 		aReferenceEdge2 = new ObjectReferenceEdge();
+		aObjectNode1.setName("Object1");
+		aObjectNode2.setName("Object2");
+		aFieldNode1.setName("Field1");
+		aFieldNode2.setName("Field2");
+		aFieldNode3.setName("Field3");
 	}
 	
 	@Test
@@ -127,7 +132,7 @@ public class TestUsageScenariosObjectDiagram extends AbstractTestUsageScenarios
 		 */
 		addEdge(aReferenceEdge1, new Point(65, 100), new Point(20, 20));
 		assertEquals(2, numberOfEdges());
-		assertEquals("name", aFieldNode1.getName());
+		assertEquals("Field1", aFieldNode1.getName());
 		
 		// create ObjectRefEdge from the other field to a different ObjectNode
 		addEdge(aReferenceEdge2, new Point(65, 125), new Point(150, 20));

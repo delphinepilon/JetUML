@@ -21,6 +21,7 @@
 package ca.mcgill.cs.jetuml.diagram.nodes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -165,5 +166,90 @@ public class TestObjectNode
 		aObject1.removeChild(aField1);
 		assertEquals( 1, aObject1.getChildren().size());
 		assertEquals( aField2, aObject1.getChildren().get(0));
+	}
+	
+	@Test
+	public void testObjectNodeEqualsItself()
+	{
+		assertEquals(aObject1, aObject1);
+		assertEquals(aObject1.hashCode(), aObject1.hashCode());
+	}
+	
+	@Test
+	public void testObjectNodeEqualsItsClone()
+	{
+		assertEquals(aObject1, aObject1.clone());
+		assertEquals(aObject1.hashCode(), aObject1.clone().hashCode());
+	}
+	
+	@Test
+	public void testObjectNodeEqualsAnotherObjectNode()
+	{
+		assertEquals(aObject1, aObject2);
+		assertEquals(aObject1.hashCode(), aObject2.hashCode());
+	}
+	
+	@Test
+	public void testObjectNodeNotEqualsNull()
+	{
+		assertNotEquals(aObject1, null);
+	}
+	
+	@Test
+	public void testObjectNodeNotEqualsString()
+	{
+		String anyString = "anystring";
+		assertNotEquals(aObject1, anyString);
+		assertNotEquals(aObject1.hashCode(), anyString.hashCode());
+	}
+	
+	@Test
+	public void testObjectNodeNotEqualsAnotherNodeTranslated()
+	{
+		aObject2.translate(200, 0);
+		assertNotEquals(aObject1, aObject2);
+		assertNotEquals(aObject1.hashCode(), aObject2.hashCode());
+	}
+	
+	@Test
+	public void testObjectNodeNotEqualsAnotherNodeWithDifferentName()
+	{
+		aObject1.setName("Object1");
+		aObject2.setName("aObject2");
+		assertNotEquals(aObject1, aObject2);
+		assertNotEquals(aObject1.hashCode(), aObject2.hashCode());
+	}
+	
+	@Test
+	public void testObjectNodeEqualsAnotherNodeWithSameChildren()
+	{
+		FieldNode fieldNode1 = new FieldNode();
+		FieldNode fieldNode2 = new FieldNode();
+		aObject1.addChild(fieldNode1);
+		aObject2.addChild(fieldNode2);
+		assertEquals(aObject1, aObject2);
+		assertEquals(aObject1.hashCode(), aObject2.hashCode());
+	}
+	
+	@Test
+	public void testObjectNodeNotEqualsAnotherNodeWithDifferentChildren()
+	{
+		FieldNode fieldNode1 = new FieldNode();
+		FieldNode fieldNode2 = new FieldNode();
+		fieldNode1.setName("field1");
+		fieldNode2.setName("field2");
+		aObject1.addChild(fieldNode1);
+		aObject2.addChild(fieldNode2);
+		assertNotEquals(aObject1, aObject2);
+		assertNotEquals(aObject1.hashCode(), aObject2.hashCode());
+	}
+	
+	@Test
+	public void testObjectNodeNotEqualsAnotherNodeWithDifferentNumberOfChildren()
+	{
+		FieldNode fieldNode = new FieldNode();
+		aObject1.addChild(fieldNode);
+		assertNotEquals(aObject1, aObject2);
+		assertNotEquals(aObject1.hashCode(), aObject2.hashCode());
 	}
 }

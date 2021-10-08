@@ -22,6 +22,7 @@ package ca.mcgill.cs.jetuml.diagram.nodes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -64,5 +65,69 @@ public class TestInterfaceNode
 		assertTrue( aNode1.getParent() == package2 );
 		aNode1.unlink();
 		assertFalse( aNode1.hasParent() );
+	}
+	
+	@Test
+	public void testInterfaceNodeEqualsItself()
+	{
+		assertEquals(aNode1, aNode1);
+		assertEquals(aNode1.hashCode(), aNode1.hashCode());
+	}
+	
+	@Test
+	public void testInterfaceNodeEqualsItsClone()
+	{
+		assertEquals(aNode1, aNode1.clone());
+		assertEquals(aNode1.hashCode(), aNode1.clone().hashCode());
+	}
+	
+	@Test
+	public void testInterfaceNodeEqualsAnotherNode()
+	{
+		InterfaceNode node2 = new InterfaceNode();
+		assertEquals(aNode1, node2);
+		assertEquals(aNode1.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testInterfaceNodeNotEqualsNull()
+	{
+		assertNotEquals(aNode1, null);
+	}
+	
+	@Test
+	public void testInterfaceNodeNotEqualsString()
+	{
+		String anyString = "anystring";
+		assertNotEquals(aNode1, anyString);
+		assertNotEquals(aNode1.hashCode(), anyString.hashCode());
+	}
+	
+	@Test
+	public void testInterfaceNodeNotEqualsAnotherNodeTranslated()
+	{
+		InterfaceNode node2 = new InterfaceNode();
+		node2.translate(200, 0);
+		assertNotEquals(aNode1, node2);
+		assertNotEquals(aNode1.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testInterfaceNodeNotEqualsAnotherNodeWithDifferentName()
+	{
+		InterfaceNode node2 = new InterfaceNode();
+		aNode1.setName("Class1");
+		node2.setName("Class2");
+		assertNotEquals(aNode1, node2);
+		assertNotEquals(aNode1.hashCode(), node2.hashCode());
+	}
+	@Test
+	public void testInterfaceNodeNotEqualsAnotherNodeWithDifferentMethods()
+	{
+		InterfaceNode node2 = new InterfaceNode();
+		aNode1.setMethods("Method1");
+		node2.setMethods("Method2");
+		assertNotEquals(aNode1, node2);
+		assertNotEquals(aNode1.hashCode(), node2.hashCode());
 	}
 }

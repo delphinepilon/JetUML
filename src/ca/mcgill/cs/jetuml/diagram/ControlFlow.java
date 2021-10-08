@@ -24,7 +24,9 @@ package ca.mcgill.cs.jetuml.diagram;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,6 +46,7 @@ import ca.mcgill.cs.jetuml.viewers.nodes.ImplicitParameterNodeViewer;
 public final class ControlFlow
 {
 	private final Diagram aDiagram;
+	private final int defaultValue = -1;
 	
 	/**
 	 * Creates a new ControlFlow to query pDiagram.
@@ -153,9 +156,26 @@ public final class ControlFlow
 		assert caller.isPresent();
 		assert !isFirstCallee(pNode);
 		List<Node> callees = getCallees(caller.get());
-		int index = callees.indexOf(pNode);
+		int index = indexOfSameNode(callees, pNode);
 		assert index >= 1;
 		return (CallNode) callees.get(index-1);
+	}
+	
+	/**
+	 * @param pList the list of interest.
+	 * @param pNode the node to find.
+	 * @return the index of the node in the list.
+	 */
+	private int indexOfSameNode(List<Node> pList, Node pNode)
+	{
+		for (int i = 0; i < pList.size(); i++)
+		{
+			if (pList.get(i) == pNode)
+			{
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	/**
@@ -271,22 +291,22 @@ public final class ControlFlow
 	public Collection<DiagramElement> getEdgeDownStreams(Edge pEdge)
 	{
 		assert pEdge != null;
-		Set<DiagramElement> downstreamElements = new HashSet<>();
+		Map<DiagramElement, Integer> downstreamElements = new IdentityHashMap<>();
 		
 		// The edge addition here is necessary for recursive calls
-		downstreamElements.add(pEdge);
+		downstreamElements.put(pEdge, defaultValue);
 		if( pEdge.getClass() == ConstructorEdge.class )
 		{
 			Node endParent = pEdge.getEnd().getParent();
-			downstreamElements.add(endParent);
-			downstreamElements.addAll(endParent.getChildren());
+			downstreamElements.put(endParent, defaultValue);
+			putAllFromListWithDefaultValue(downstreamElements, endParent.getChildren());
 			
 			// Recursively add downstream elements of the child nodes
 			for( Node child: endParent.getChildren() )
 			{
 				for( Edge edge: getCalls(child) )
 				{
-					downstreamElements.addAll(getEdgeDownStreams(edge));
+					putAllFromListWithDefaultValue(downstreamElements, getEdgeDownStreams(edge));
 				}
 				
 				// Add upstream edges of the child nodes
@@ -294,7 +314,7 @@ public final class ControlFlow
 				{
 					if( edge.getEnd() == child )
 					{
-						downstreamElements.add(edge);
+						downstreamElements.put(edge, defaultValue);
 					}
 				}
 			}
@@ -302,13 +322,26 @@ public final class ControlFlow
 		else if( pEdge.getClass() == CallEdge.class )
 		{
 			CallNode endNode = (CallNode)pEdge.getEnd();
-			downstreamElements.add(endNode);
+			downstreamElements.put(endNode, defaultValue);
 			for( Edge e: getCalls(endNode) )
 			{
-				downstreamElements.addAll(getEdgeDownStreams(e));
+				putAllFromListWithDefaultValue(downstreamElements, getEdgeDownStreams(e));
 			}
 		}
-		return downstreamElements;
+		return downstreamElements.keySet();
+	}
+	
+	/**
+	 * Inserts all the elements of pElements into pMap with value defaultValue;
+	 * @param pMap the map to which we want to add elements.
+	 * @param pElements the elements to add to the map. 
+	 */
+	private void putAllFromListWithDefaultValue(Map<DiagramElement, Integer> pMap, Collection<? extends DiagramElement> pElements)
+	{
+		for (DiagramElement element : pElements)
+		{
+			pMap.put(element, defaultValue);
+		}
 	}
 
 	/** 
@@ -319,13 +352,14 @@ public final class ControlFlow
 	public Collection<DiagramElement> getNodeDownStreams(Node pNode)
 	{
 		assert pNode!=null;
-		Set<DiagramElement> downstreamElements = new HashSet<>();
+		//Set<DiagramElement> downstreamElements = new HashSet<>();
+		Map<DiagramElement, Integer> downstreamElements = new IdentityHashMap<>();
 		if( isConstructorExecution(pNode) )
 		{
 			Optional<Edge> constructorEdge = getConstructorEdge(pNode);
 			if( constructorEdge.isPresent() )
 			{
-				downstreamElements.addAll(getEdgeDownStreams(constructorEdge.get()));
+				putAllFromListWithDefaultValue(downstreamElements, getEdgeDownStreams(constructorEdge.get()));
 			}
 		}
 		else if( isConstructedObject(pNode) )
@@ -333,28 +367,28 @@ public final class ControlFlow
 			Optional<Edge> constructorEdge = getConstructorEdge(getFirstChild(pNode));
 			if( constructorEdge.isPresent() )
 			{
-				downstreamElements.addAll(getEdgeDownStreams(constructorEdge.get()));
+				putAllFromListWithDefaultValue(downstreamElements, getEdgeDownStreams(constructorEdge.get()));
 			}
 		}
 		else if( pNode.getClass() == CallNode.class )
 		{
 			for( Edge edge: getCalls(pNode) )
 			{
-				downstreamElements.addAll(getEdgeDownStreams(edge));
+				putAllFromListWithDefaultValue(downstreamElements, getEdgeDownStreams(edge));
 			}
 		}
 		else if ( pNode.getClass() == ImplicitParameterNode.class )
 		{
-			downstreamElements.addAll(pNode.getChildren());
+			putAllFromListWithDefaultValue(downstreamElements, pNode.getChildren());
 			for( Node child: pNode.getChildren() )
 			{
 				for( Edge edge: getCalls(child) )
 				{
-					downstreamElements.addAll(getEdgeDownStreams(edge));
+					putAllFromListWithDefaultValue(downstreamElements, getEdgeDownStreams(edge));
 				}
 			}
 		}
-		return downstreamElements;
+		return downstreamElements.keySet();
 	}
 	
 	private boolean onlyCallsOneObject(Node pCaller, Node pParentNode)
@@ -457,7 +491,7 @@ public final class ControlFlow
 	public Collection<DiagramElement> getCorrespondingReturnEdges(List<DiagramElement> pElements)
 	{
 		assert pElements != null;
-		Set<DiagramElement> returnEdges = new HashSet<>();
+		Map<DiagramElement, Integer> returnEdges = new IdentityHashMap<>();
 		for( DiagramElement element: pElements )
 		{
 			if( element instanceof CallEdge )
@@ -465,11 +499,11 @@ public final class ControlFlow
 				Optional<Edge> returnEdge = getReturnEdge((Edge) element);
 				if( returnEdge.isPresent() )
 				{
-					returnEdges.add(returnEdge.get());
+					returnEdges.put(returnEdge.get(), defaultValue);
 				}
 			}
 		}
-		return returnEdges;
+		return returnEdges.keySet();
 	}
 
 	/**

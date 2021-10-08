@@ -154,4 +154,59 @@ public class TestActorNode
 	{
 		assertFalse(aNode.allowsChildren());
 	}
+	
+	@Test
+	public void testActorNodeEqualsItself()
+	{
+		assertEquals(aNode, aNode);
+		assertEquals(aNode.hashCode(), aNode.hashCode());
+	}
+	
+	@Test
+	public void testActorNodeEqualsItsClone()
+	{
+		assertEquals(aNode, aNode.clone());
+		assertEquals(aNode.hashCode(), aNode.clone().hashCode());
+	}
+	
+	@Test
+	public void testActorNodeEqualsAnotherActorNode()
+	{
+		ActorNode node2 = new ActorNode();
+		assertEquals(aNode, node2);
+		assertEquals(aNode.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testActorNodeNotEqualsNull()
+	{
+		assertNotEquals(aNode, null);
+	}
+	
+	@Test
+	public void testActorNodeNotEqualsString()
+	{
+		String anyString = "anystring";
+		assertNotEquals(aNode, anyString);
+		assertNotEquals(aNode.hashCode(), anyString.hashCode());
+	}
+	
+	@Test
+	public void testActorNodeNotEqualsAnotherNodeTranslated()
+	{
+		ActorNode node2 = new ActorNode();
+		node2.translate(200, 0);
+		assertNotEquals(aNode, node2);
+		assertNotEquals(aNode.hashCode(), node2.hashCode());
+	}
+	
+	@Test
+	public void testActorNodeNotEqualsAnotherNodeWithDifferentName()
+	{
+		ActorNode node2 = new ActorNode();
+		aNode.setName("Mario");
+		node2.setName("Luigi");
+		assertNotEquals(aNode, node2);
+		assertNotEquals(aNode.hashCode(), node2.hashCode());
+	}
 }

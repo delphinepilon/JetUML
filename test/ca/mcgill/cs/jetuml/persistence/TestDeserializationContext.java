@@ -54,6 +54,9 @@ public class TestDeserializationContext
 		aClassNode1 = new ClassNode();
 		aClassNode2 = new ClassNode();
 		aClassNode3 = new ClassNode();
+		aClassNode1.setName("Class1");
+		aClassNode2.setName("Class2");
+		aClassNode3.setName("Class3");
 	}
 	
 	@Test

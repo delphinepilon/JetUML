@@ -72,4 +72,33 @@ public abstract class AbstractDiagramElement implements DiagramElement
 	{
 		aProperties = new Properties();
 	}
+	
+	@Override
+	public boolean equals(Object pObject)
+	{
+		if (pObject == null)
+		{
+			return false;
+		}
+		else if (pObject == this)
+		{
+			return true;
+		}
+		else if (pObject.getClass() != getClass())
+		{
+			return false;
+		}
+		else 
+		{
+			AbstractDiagramElement abstractDiagramElement = (AbstractDiagramElement)pObject;
+			return abstractDiagramElement.aProperties.equals(aProperties);
+		}
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		final int prime = 13;
+		return prime * aProperties.hashCode();
+	}
 }
