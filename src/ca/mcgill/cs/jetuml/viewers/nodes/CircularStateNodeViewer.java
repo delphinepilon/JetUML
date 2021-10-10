@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.geom.Direction;
 import ca.mcgill.cs.jetuml.geom.GeomUtils;
@@ -69,8 +71,15 @@ public final class CircularStateNodeViewer extends AbstractNodeViewer
 	}   	 
 
 	@Override
-	public Rectangle getBounds(Node pNode)
+	public Function<Node, Rectangle> createNodeBoundsCalculator() 
 	{
-		return new Rectangle(pNode.position().getX(), pNode.position().getY(), DIAMETER, DIAMETER);
+		return new Function<Node, Rectangle>()
+		{
+			@Override
+			public Rectangle apply(Node pNode) 
+			{
+				return new Rectangle(pNode.position().getX(), pNode.position().getY(), DIAMETER, DIAMETER);
+			}
+		};
 	}
 }

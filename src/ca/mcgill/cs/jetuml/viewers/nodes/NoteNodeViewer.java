@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.NoteNode;
 import ca.mcgill.cs.jetuml.geom.Dimension;
@@ -84,12 +86,19 @@ public final class NoteNodeViewer extends AbstractNodeViewer
 		);
 		return path;
 	}
-	
+
 	@Override
-	public Rectangle getBounds(Node pNode)
+	public Function<Node, Rectangle> createNodeBoundsCalculator() 
 	{
-		Dimension textBounds = NOTE_VIEWER.getDimension(((NoteNode)pNode).getName()); 
-		return new Rectangle(pNode.position().getX(), pNode.position().getY(), 
-				Math.max(textBounds.width() + FOLD_LENGTH, DEFAULT_WIDTH), Math.max(textBounds.height(), DEFAULT_HEIGHT));
+		return new Function<Node, Rectangle>()
+		{
+			@Override
+			public Rectangle apply(Node pNode) 
+			{
+				Dimension textBounds = NOTE_VIEWER.getDimension(((NoteNode)pNode).getName()); 
+				return new Rectangle(pNode.position().getX(), pNode.position().getY(), 
+						Math.max(textBounds.width() + FOLD_LENGTH, DEFAULT_WIDTH), Math.max(textBounds.height(), DEFAULT_HEIGHT));
+			}
+		};
 	}
 }
