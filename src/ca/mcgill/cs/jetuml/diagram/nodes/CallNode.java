@@ -110,45 +110,4 @@ public class CallNode extends AbstractNode
 	{
 		return aImplicitParameter.isPresent();
 	}
-	
-	@Override
-	public boolean equals(Object pObject)
-	{
-		if (pObject == null)
-		{
-			return false;
-		}
-		else if (pObject == this)
-		{
-			return true;
-		}
-		else if (pObject.getClass() != getClass())
-		{
-			return false;
-		}
-		else if (!super.equals(pObject))
-		{
-			return false;
-		}
-		else
-		{
-			CallNode callNode = (CallNode)pObject;
-			if (callNode.hasParent())
-			{
-				return callNode.getParent().toString().equals(getParent().toString());
-			}
-			return true;
-		}
-	}
-	
-	@Override
-	public int hashCode()
-	{
-		int hash = 1;
-		if (hasParent())
-		{
-			hash = hash * getParent().toString().hashCode();
-		}
-		return hash * super.hashCode();
-	}
 }

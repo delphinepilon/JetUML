@@ -183,13 +183,36 @@ public abstract class AbstractNode extends AbstractDiagramElement implements Nod
 		else 
 		{
 			AbstractNode abstractNode = (AbstractNode)pObject;
-			return abstractNode.position().equals(position());
+			if (!abstractNode.position().equals(position()))
+			{
+				return false;
+			}
+			if (getChildren().size() != abstractNode.getChildren().size())
+			{
+				return false;
+			}
+			for (Node child : abstractNode.getChildren())
+			{
+				if (!getChildren().contains(child))
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 	
 	@Override
 	public int hashCode()
 	{
-		return getClass().getSimpleName().hashCode() * position().hashCode() * super.hashCode();
+		int hash = 1;
+		for (Node child : getChildren())
+		{
+			if (child.hashCode() != 0)
+			{
+				hash = hash * child.hashCode();
+			}
+		}
+		return hash * getClass().getSimpleName().hashCode() * position().hashCode() * super.hashCode();
 	}
 }

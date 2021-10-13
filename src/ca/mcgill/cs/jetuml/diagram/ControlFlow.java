@@ -23,12 +23,10 @@ package ca.mcgill.cs.jetuml.diagram;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import ca.mcgill.cs.jetuml.diagram.edges.CallEdge;
 import ca.mcgill.cs.jetuml.diagram.edges.ConstructorEdge;
@@ -46,7 +44,7 @@ import ca.mcgill.cs.jetuml.viewers.nodes.ImplicitParameterNodeViewer;
 public final class ControlFlow
 {
 	private final Diagram aDiagram;
-	private final int defaultValue = -1;
+	private final int aDefaultValueForMap = -1;
 	
 	/**
 	 * Creates a new ControlFlow to query pDiagram.
@@ -294,11 +292,11 @@ public final class ControlFlow
 		Map<DiagramElement, Integer> downstreamElements = new IdentityHashMap<>();
 		
 		// The edge addition here is necessary for recursive calls
-		downstreamElements.put(pEdge, defaultValue);
+		downstreamElements.put(pEdge, aDefaultValueForMap);
 		if( pEdge.getClass() == ConstructorEdge.class )
 		{
 			Node endParent = pEdge.getEnd().getParent();
-			downstreamElements.put(endParent, defaultValue);
+			downstreamElements.put(endParent, aDefaultValueForMap);
 			putAllFromListWithDefaultValue(downstreamElements, endParent.getChildren());
 			
 			// Recursively add downstream elements of the child nodes
@@ -314,7 +312,7 @@ public final class ControlFlow
 				{
 					if( edge.getEnd() == child )
 					{
-						downstreamElements.put(edge, defaultValue);
+						downstreamElements.put(edge, aDefaultValueForMap);
 					}
 				}
 			}
@@ -322,7 +320,7 @@ public final class ControlFlow
 		else if( pEdge.getClass() == CallEdge.class )
 		{
 			CallNode endNode = (CallNode)pEdge.getEnd();
-			downstreamElements.put(endNode, defaultValue);
+			downstreamElements.put(endNode, aDefaultValueForMap);
 			for( Edge e: getCalls(endNode) )
 			{
 				putAllFromListWithDefaultValue(downstreamElements, getEdgeDownStreams(e));
@@ -340,7 +338,7 @@ public final class ControlFlow
 	{
 		for (DiagramElement element : pElements)
 		{
-			pMap.put(element, defaultValue);
+			pMap.put(element, aDefaultValueForMap);
 		}
 	}
 
@@ -352,7 +350,6 @@ public final class ControlFlow
 	public Collection<DiagramElement> getNodeDownStreams(Node pNode)
 	{
 		assert pNode!=null;
-		//Set<DiagramElement> downstreamElements = new HashSet<>();
 		Map<DiagramElement, Integer> downstreamElements = new IdentityHashMap<>();
 		if( isConstructorExecution(pNode) )
 		{
@@ -427,7 +424,7 @@ public final class ControlFlow
 	public Collection<DiagramElement> getNodeUpstreams(Node pNode)
 	{
 		assert pNode != null;
-		Set<DiagramElement> elements = new HashSet<>();
+		Map<DiagramElement, Integer> elements = new IdentityHashMap<>();
 		if( pNode.getClass() == CallNode.class )
 		{
 			Optional<CallNode> caller = getCaller(pNode);
@@ -437,15 +434,15 @@ public final class ControlFlow
 				// If the caller is only connected to one call
 				if( getCalls(callerNode).size() == 1 && getCalls(callerNode).get(0).getEnd() == pNode )
 				{
-					elements.add(callerNode);
+					elements.put(callerNode, aDefaultValueForMap);
 				}
 				else if( isConstructorExecution(pNode) )
 				{
 					getCalls(callerNode).stream().filter(e -> e.getEnd().getParent() == pNode.getParent())
-												 .forEach(e -> elements.add(e));
+												 .forEach(e -> elements.put(e, aDefaultValueForMap));
 					if( onlyCallsOneObject(callerNode, pNode.getParent()) )
 					{
-						elements.add(callerNode);
+						elements.put(callerNode, aDefaultValueForMap);
 					}
 				}
 			}
@@ -455,10 +452,10 @@ public final class ControlFlow
 			Optional<CallNode> caller = getCaller(getFirstChild(pNode));
 			if( caller.isPresent() && getCaller(caller.get()).isEmpty() && onlyCallsOneObject(caller.get(), pNode) )
 			{
-				elements.add(caller.get());
+				elements.put(caller.get(), aDefaultValueForMap);
 			}
 		}
-		return elements;
+		return elements.keySet();
 	}
 	
 	/**
@@ -499,7 +496,7 @@ public final class ControlFlow
 				Optional<Edge> returnEdge = getReturnEdge((Edge) element);
 				if( returnEdge.isPresent() )
 				{
-					returnEdges.put(returnEdge.get(), defaultValue);
+					returnEdges.put(returnEdge.get(), aDefaultValueForMap);
 				}
 			}
 		}

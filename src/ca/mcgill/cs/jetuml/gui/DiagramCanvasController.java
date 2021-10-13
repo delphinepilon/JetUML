@@ -23,11 +23,11 @@ package ca.mcgill.cs.jetuml.gui;
 import static ca.mcgill.cs.jetuml.diagram.DiagramType.viewerFor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import ca.mcgill.cs.jetuml.application.Clipboard;
 import ca.mcgill.cs.jetuml.application.MoveTracker;
@@ -99,16 +99,19 @@ public class DiagramCanvasController
 	 */
 	public void synchronizeSelectionModel()
 	{
-		Set<DiagramElement> toBeRemoved = new HashSet<>();
+		Map<DiagramElement, Integer> toBeRemoved = new IdentityHashMap<>();
+		final int defaultValueForMap = -1;
 		for(DiagramElement selected : aSelectionModel )
 		{
 			if(!aCanvas.getDiagram().contains(selected)) 
 			{
-				toBeRemoved.add(selected);
+				toBeRemoved.put(selected, defaultValueForMap);
 			}
 		}
-
-		toBeRemoved.forEach( element -> aSelectionModel.removeFromSelection(element));            
+		for (DiagramElement element : toBeRemoved.keySet())
+		{
+			aSelectionModel.removeFromSelection(element);
+		}
 	}
 	
 	/**

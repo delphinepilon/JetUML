@@ -24,10 +24,11 @@ package ca.mcgill.cs.jetuml.diagram.builder;
 import static ca.mcgill.cs.jetuml.diagram.DiagramType.viewerFor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -355,14 +356,14 @@ public abstract class DiagramBuilder
 	public final DiagramOperation createRemoveElementsOperation(Iterable<DiagramElement> pElements)
 	{
 		assert pElements != null;
-		Set<DiagramElement> toDelete = new HashSet<>();
+		Map<DiagramElement, Integer> toDelete = new IdentityHashMap<>();
 		for( DiagramElement element : pElements)
 		{
-			toDelete.addAll(getCoRemovals(element));
+			putAllFromListWithDefaultValue(toDelete, getCoRemovals(element));
 		}
 		CompoundOperation result = new CompoundOperation();
 		
-		for( DiagramElement element : tweakOrder(toDelete))
+		for( DiagramElement element : tweakOrder(toDelete.keySet()))
 		{
 			if( element instanceof Edge )
 			{
@@ -388,6 +389,20 @@ public abstract class DiagramBuilder
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Inserts all the elements of pElements into pMap with value defaultValue.
+	 * @param pMap the map to which we want to add elements.
+	 * @param pElements the elements to add to the map. 
+	 */
+	private void putAllFromListWithDefaultValue(Map<DiagramElement, Integer> pMap, Collection<? extends DiagramElement> pElements)
+	{
+		final int defaultValueForHashMap = -1;
+		for (DiagramElement element : pElements)
+		{
+			pMap.put(element, defaultValueForHashMap);
+		}
 	}
 	
 	/**

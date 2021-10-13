@@ -26,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -246,16 +246,19 @@ public class TestSequenceDiagramBuilder
 	@Test
 	public void testGetCoRemovals()
 	{
-		aDefaultCallNode2.translate(100, 100);
+		final int defaultValueForMap = -1;
 		aCallEdge1.connect(aDefaultCallNode1, aDefaultCallNode2, aDiagram);
 		aDiagram.addEdge(aCallEdge1);
 		aDiagram.addRootNode(aDefaultCallNode1);
 		aDiagram.addRootNode(aDefaultCallNode2);
-		Collection<DiagramElement> elements = new HashSet<>();
-		elements.addAll(aBuilder.getCoRemovals(aCallEdge1));
+		Map<DiagramElement, Integer> elements = new IdentityHashMap<>();
+		for (DiagramElement element : aBuilder.getCoRemovals(aCallEdge1))
+		{
+			elements.put(element, defaultValueForMap);
+		}
 		assertEquals(3, elements.size());
-		assertTrue(elements.contains(aDefaultCallNode1));
-		assertTrue(elements.contains(aDefaultCallNode2));
-		assertTrue(elements.contains(aCallEdge1));
+		assertTrue(elements.keySet().contains(aDefaultCallNode1));
+		assertTrue(elements.keySet().contains(aDefaultCallNode2));
+		assertTrue(elements.keySet().contains(aCallEdge1));
 	}
 }
