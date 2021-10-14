@@ -83,6 +83,21 @@ public class TestNodeStorage
 		assertNotSame(initialBoundsC, finalBoundsC); // the bounds were removed from the storage and recomputed. 
 	}
 	
+	@Test
+	public void testNodeStoragePositionCache()
+	{
+		ClassNode classNode = new ClassNode();
+		Rectangle initialBounds = aNodeStorage.getBounds(classNode, createBoundCalculatorForTests()); 
+		classNode.translate(20, 20);
+		classNode.setName("TrialName");
+		Rectangle boundsA = aNodeStorage.getBounds(classNode, createBoundCalculatorForTests()); // recognizes changed position, bounds recomputed.
+		Rectangle boundsB = aNodeStorage.getBounds(classNode, createBoundCalculatorForTests()); // recognizes !clone.equals(node), bounds recomputed. 
+		assertEquals(new Rectangle(0, 0, 10, 10), initialBounds);
+		assertEquals(new Rectangle(20, 20, 10, 10), boundsA);
+		assertEquals(new Rectangle(20, 20, 10, 10), boundsB);
+		assertNotSame(boundsA, boundsB); 
+	}
+	
 	private Function<Node, Rectangle> createBoundCalculatorForTests()
 	{
 		return new Function<Node, Rectangle>()

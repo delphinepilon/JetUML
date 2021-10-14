@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 import ca.mcgill.cs.jetuml.diagram.Node;
+import ca.mcgill.cs.jetuml.geom.Point;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 
 /**
@@ -18,6 +18,7 @@ public class NodeStorage
 	private final int NUMBER_OF_CALLS_BETWEEN_CLEANS = 1000;
 	
 	private Map<Node, Rectangle> aNodeBounds = new IdentityHashMap<Node, Rectangle>();
+	private Map<Node, Point> aNodePositions = new IdentityHashMap<Node, Point>();
 	private Map<Node, Node> aSavedNodeClones = new IdentityHashMap<Node, Node>();
 	private int aCallCounter;
 	
@@ -38,7 +39,15 @@ public class NodeStorage
 	public Rectangle getBounds(Node pNode, Function<Node, Rectangle> pBoundCalculator)
 	{
 		cleanBoundStorage();
-		if (aSavedNodeClones.containsKey(pNode) && aSavedNodeClones.get(pNode).equals(pNode))
+		if (aNodeBounds.containsKey(pNode) && !aNodePositions.get(pNode).equals(pNode.position()))
+		{
+			Rectangle newlyComputedBounds = pBoundCalculator.apply(pNode);
+			aNodeBounds.put(pNode, newlyComputedBounds);
+			aNodePositions.put(pNode, pNode.position());
+			updateClonePosition(pNode, pNode.position());
+			return newlyComputedBounds;
+		}
+		else if (aNodeBounds.containsKey(pNode) && aSavedNodeClones.get(pNode).equals(pNode))
 		{
 			return aNodeBounds.get(pNode);
 		}
@@ -46,9 +55,21 @@ public class NodeStorage
 		{
 			Rectangle newlyComputedBounds = pBoundCalculator.apply(pNode);
 			aNodeBounds.put(pNode, newlyComputedBounds);
+			aNodePositions.put(pNode, pNode.position());
 			aSavedNodeClones.put(pNode, pNode.clone());
 			return newlyComputedBounds;
 		}
+	}
+
+	/**
+	 * Updates pNode's clone's position without calling Node.clone(). 
+	 */
+	private void updateClonePosition(Node pNode, Point pPosition) 
+	{
+		Node clone = aSavedNodeClones.get(pNode);
+		int cloneX = clone.position().getX();
+		int cloneY = clone.position().getY();
+		clone.translate(-cloneX+pPosition.getX(), -cloneY+pPosition.getY());
 	}
 
 	/**
@@ -71,6 +92,7 @@ public class NodeStorage
 			{
 				aNodeBounds.remove(node);
 				aSavedNodeClones.remove(node);
+				aNodePositions.remove(node);
 			}
 			aCallCounter = 0;
 		}
