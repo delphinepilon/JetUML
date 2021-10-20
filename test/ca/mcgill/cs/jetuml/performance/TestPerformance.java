@@ -16,33 +16,30 @@ import ca.mcgill.cs.jetuml.viewers.nodes.NodeViewerRegistry;
  */
 public class TestPerformance 
 {
-	private final int numberOfRounds = 10;
-	private final int numberOfTranslationsPerRound = 10000;
+	private static final int NUMBER_OF_ROUNDS = 10;
+	private static final int NUMBER_OF_ITERATIONS_PER_ROUND = 10000;
 	
-	@Test
-	public void runTest()
+	public static void main(String[] pArgs)
 	{
-		// To run the performance test, simply uncomment the following lines and run the test class. 
-		/*
 		testGetBoundsPerformanceWithTenNodesContinuouslyBeingTranslated();
 		testGetBoundsPerformanceWithThreeNodesContinuouslyBeingTranslated();
 		testGetBoundsPerformanceWithClassNodeContinuouslyBeingTranslated();
-		*/
+		
 	}
 	
 	/**
 	 * Tests NodeViewerRegistry.getBounds(Node) as a ClassNode is continuously being translated. 
 	 */
-	public void testGetBoundsPerformanceWithClassNodeContinuouslyBeingTranslated()
+	public static void testGetBoundsPerformanceWithClassNodeContinuouslyBeingTranslated()
 	{
 		double averageTime = 0.0;
 		
-		for (int i = 0; i < numberOfRounds; i++)
+		for (int i = 0; i < NUMBER_OF_ROUNDS; i++)
 		{
 			ClassNode classNode = new ClassNode();
 			
 			Instant start = Instant.now();
-			for (int j = 0; j < numberOfTranslationsPerRound; j++)
+			for (int j = 0; j < NUMBER_OF_ITERATIONS_PER_ROUND; j++)
 			{
 				classNode.translate(i, i);
 				NodeViewerRegistry.getBounds(classNode);
@@ -51,25 +48,25 @@ public class TestPerformance
 			
 			averageTime += Duration.between(start, end).getNano()*0.000001;
 		}
-		averageTime = averageTime / numberOfRounds;
-		System.out.println("(1 node) Average duration of " + numberOfRounds + " trials in milliseconds : " + averageTime);
+		averageTime = averageTime / NUMBER_OF_ROUNDS;
+		System.out.println("(1 node) Average duration of " + NUMBER_OF_ROUNDS + " trials in milliseconds : " + averageTime);
 	}
 	
 	/**
 	 * Tests NodeViewerRegistry.getBounds(Node) as 3 nodes of different types keep being translated. 
 	 */
-	public void testGetBoundsPerformanceWithThreeNodesContinuouslyBeingTranslated()
+	public static void testGetBoundsPerformanceWithThreeNodesContinuouslyBeingTranslated()
 	{
 		double averageTime = 0.0;
 		
-		for (int i = 0; i < numberOfRounds; i++)
+		for (int i = 0; i < NUMBER_OF_ROUNDS; i++)
 		{
 			PackageNode packageNode = new PackageNode();
 			ClassNode classNode = new ClassNode();
 			NoteNode noteNode = new NoteNode();
 			
 			Instant start = Instant.now();
-			for (int j = 0; j < numberOfTranslationsPerRound; j++)
+			for (int j = 0; j < NUMBER_OF_ITERATIONS_PER_ROUND; j++)
 			{
 				packageNode.translate(i, i);
 				classNode.translate(i, i);
@@ -82,18 +79,18 @@ public class TestPerformance
 			
 			averageTime += Duration.between(start, end).getNano()*0.000001;
 		}
-		averageTime = averageTime / numberOfRounds;
-		System.out.println("(3 nodes) Average duration of " + numberOfRounds + " trials in milliseconds : " + averageTime);
+		averageTime = averageTime / NUMBER_OF_ROUNDS;
+		System.out.println("(3 nodes) Average duration of " + NUMBER_OF_ROUNDS + " trials in milliseconds : " + averageTime);
 	}
 	
 	/**
 	 * Tests NodeViewerRegistry.getBounds(Node) as 10 nodes of different types keep being translated. 
 	 */
-	public void testGetBoundsPerformanceWithTenNodesContinuouslyBeingTranslated()
+	public static void testGetBoundsPerformanceWithTenNodesContinuouslyBeingTranslated()
 	{
 		double averageTime = 0.0;
 		
-		for (int i = 0; i < numberOfRounds; i++)
+		for (int i = 0; i < NUMBER_OF_ROUNDS; i++)
 		{
 			PackageNode packageNode = new PackageNode();
 			ClassNode classNode = new ClassNode();
@@ -107,7 +104,7 @@ public class TestPerformance
 			ObjectNode objectNode7 = new ObjectNode();
 			
 			Instant start = Instant.now();
-			for (int j = 0; j < numberOfTranslationsPerRound; j++)
+			for (int j = 0; j < NUMBER_OF_ITERATIONS_PER_ROUND; j++)
 			{
 				packageNode.translate(i, i);
 				classNode.translate(i, i);
@@ -134,7 +131,7 @@ public class TestPerformance
 			
 			averageTime += Duration.between(start, end).getNano()*0.000001;
 		}
-		averageTime = averageTime / numberOfRounds;
-		System.out.println("(10 nodes) Average duration of " + numberOfRounds + " trials in milliseconds : " + averageTime);
+		averageTime = averageTime / NUMBER_OF_ROUNDS;
+		System.out.println("(10 nodes) Average duration of " + NUMBER_OF_ROUNDS + " trials in milliseconds : " + averageTime);
 	}
 }
