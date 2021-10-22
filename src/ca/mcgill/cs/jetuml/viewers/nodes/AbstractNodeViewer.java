@@ -119,15 +119,9 @@ public abstract class AbstractNodeViewer implements NodeViewer
  	}
 	
 	@Override
-	public void activateNodeStorage()
+	public void clearNodeStorage()
 	{
-		aStorage.activate();
-	}
-	
-	@Override
-	public void deactivateNodeStorage()
-	{
-		aStorage.deactivate();
+		aStorage.clear();
 	}
 
  	/**

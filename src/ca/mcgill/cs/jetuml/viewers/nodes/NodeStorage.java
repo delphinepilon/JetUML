@@ -14,7 +14,7 @@ public class NodeStorage
 {
 	
 	private Map<Node, Rectangle> aNodeBounds = new IdentityHashMap<Node, Rectangle>();
-	private boolean aIsActive = false;
+	private static boolean aIsNodeStorageActivated = false;
 
 	/**
 	 * Returns the bounds of the current node either from the storage or from the calculator.
@@ -24,11 +24,11 @@ public class NodeStorage
 	 */
 	public Rectangle getBounds(Node pNode, Function<Node, Rectangle> pBoundCalculator)
 	{
-		if (!aIsActive)
+		if (!aIsNodeStorageActivated)
 		{
 			return pBoundCalculator.apply(pNode);
 		}
-		else if (aIsActive && aNodeBounds.containsKey(pNode))
+		else if (aIsNodeStorageActivated && aNodeBounds.containsKey(pNode))
 		{
 			return aNodeBounds.get(pNode);
 		}
@@ -43,17 +43,21 @@ public class NodeStorage
 	/**
 	 * Activates the NodeStorage.
 	 */
-	public void activate() 
+	public static void activate() 
 	{
-		aIsActive = true;
+		aIsNodeStorageActivated = true;
 	}
 	
 	/**
 	 * Deactivates the NodeStorage.
 	 */
-	public void deactivate() 
+	public static void deactivate() 
 	{
-		aIsActive = false;
+		aIsNodeStorageActivated = false;
+	}
+	
+	public void clear()
+	{
 		aNodeBounds.clear();
 	}
 }

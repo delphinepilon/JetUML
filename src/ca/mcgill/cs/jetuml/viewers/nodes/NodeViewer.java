@@ -87,7 +87,5 @@ public interface NodeViewer
 	 */
 	Point getConnectionPoint(Node pNode, Direction pDirection);
 	
-	void activateNodeStorage();
-	
-	void deactivateNodeStorage();
+	void clearNodeStorage();
 }
