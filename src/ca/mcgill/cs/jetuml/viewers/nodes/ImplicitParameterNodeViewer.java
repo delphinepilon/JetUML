@@ -24,6 +24,7 @@ import static ca.mcgill.cs.jetuml.geom.GeomUtils.max;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import ca.mcgill.cs.jetuml.diagram.ControlFlow;
 import ca.mcgill.cs.jetuml.diagram.Diagram;
@@ -116,14 +117,21 @@ public final class ImplicitParameterNodeViewer extends AbstractNodeViewer
 	}
 
 	@Override
-	public Rectangle getBounds(Node pNode)
-	{
-		Rectangle topRectangle = getTopRectangle(pNode);
-		Point childrenMaxXY = getMaxXYofChildren(pNode);
-		int width = max(topRectangle.getWidth(), DEFAULT_WIDTH, childrenMaxXY.getX() - pNode.position().getX());
-		int height = max(DEFAULT_HEIGHT, childrenMaxXY.getY() + TAIL_HEIGHT) - topRectangle.getY();	
-		return new Rectangle(pNode.position().getX(), topRectangle.getY(), width, height);
-	}
+ 	public Function<Node, Rectangle> createNodeBoundsCalculator() 
+ 	{
+ 		return new Function<Node, Rectangle>()
+ 		{
+ 			@Override
+ 			public Rectangle apply(Node pNode) 
+ 			{
+ 				Rectangle topRectangle = getTopRectangle(pNode);
+ 				Point childrenMaxXY = getMaxXYofChildren(pNode);
+ 				int width = max(topRectangle.getWidth(), DEFAULT_WIDTH, childrenMaxXY.getX() - pNode.position().getX());
+ 				int height = max(DEFAULT_HEIGHT, childrenMaxXY.getY() + TAIL_HEIGHT) - topRectangle.getY();	
+ 				return new Rectangle(pNode.position().getX(), topRectangle.getY(), width, height);
+ 			}
+ 		};
+ 	}
 	
 	private int getYWithConstructorCall(Node pNode) 
 	{

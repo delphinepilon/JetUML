@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.geom.Direction;
 import ca.mcgill.cs.jetuml.geom.Point;
@@ -34,10 +36,17 @@ public final class PointNodeViewer extends AbstractNodeViewer
 	private static final int SELECTION_DISTANCE = 5;
 	
 	@Override
-	public Rectangle getBounds(Node pNode)
-	{
-		return new Rectangle(pNode.position().getX(), pNode.position().getY(), 0, 0);
-	}
+ 	public Function<Node, Rectangle> createNodeBoundsCalculator() 
+ 	{
+ 		return new Function<Node, Rectangle>()
+ 		{
+ 			@Override
+ 			public Rectangle apply(Node pNode) 
+ 			{
+ 				return new Rectangle(pNode.position().getX(), pNode.position().getY(), 0, 0);
+ 			}
+ 		};
+ 	}
 
 	@Override
 	public boolean contains(Node pNode, Point pPoint)

@@ -154,4 +154,20 @@ public final class NodeViewerRegistry
    	{
 		return INSTANCE.viewerFor(pNode).getConnectionPoint(pNode, pDirection);
    	}
+
+	public static void activateNodeStorage() 
+	{
+		for (NodeViewer nodeViewer : INSTANCE.aRegistry.values())
+   		{
+   			nodeViewer.activateNodeStorage();
+   		}
+	}
+	
+	public static void deactivateNodeStorage() 
+	{
+		for (NodeViewer nodeViewer : INSTANCE.aRegistry.values())
+   		{
+   			nodeViewer.deactivateNodeStorage();
+   		}
+	}
 }

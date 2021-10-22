@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.FieldNode;
 import ca.mcgill.cs.jetuml.diagram.nodes.ObjectNode;
@@ -76,18 +78,25 @@ public final class FieldNodeViewer extends AbstractNodeViewer
 	}
 	
 	@Override
-	public Rectangle getBounds(Node pNode)
-	{
-		final int leftWidth = leftWidth(pNode);
-		final int height = getHeight(pNode);
-		if( pNode.hasParent() )
-		{
-			int yPosition = OBJECT_NODE_VIEWER.getYPosition(pNode.getParent(), (FieldNode) pNode);
-			Rectangle parentBounds = OBJECT_NODE_VIEWER.getBounds(pNode.getParent());
-			return new Rectangle(parentBounds.getX() + XGAP, yPosition, parentBounds.getWidth() - 2*XGAP, height);
-		}
-		return new Rectangle(DEFAULT_WIDTH / 2 - leftWidth, 0, leftWidth + rightWidth(pNode), height);
-	}
+ 	public Function<Node, Rectangle> createNodeBoundsCalculator() 
+ 	{
+ 		return new Function<Node, Rectangle>()
+ 		{
+ 			@Override
+ 			public Rectangle apply(Node pNode) 
+ 			{
+ 				final int leftWidth = leftWidth(pNode);
+ 				final int height = getHeight(pNode);
+ 				if( pNode.hasParent() )
+ 				{
+ 					int yPosition = OBJECT_NODE_VIEWER.getYPosition(pNode.getParent(), (FieldNode) pNode);
+ 					Rectangle parentBounds = OBJECT_NODE_VIEWER.getBounds(pNode.getParent());
+ 					return new Rectangle(parentBounds.getX() + XGAP, yPosition, parentBounds.getWidth() - 2*XGAP, height);
+ 				}
+ 				return new Rectangle(DEFAULT_WIDTH / 2 - leftWidth, 0, leftWidth + rightWidth(pNode), height);
+ 			}
+ 		};
+ 	}
 	
 	/**
 	 * @param pNode The node

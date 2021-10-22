@@ -23,6 +23,7 @@ package ca.mcgill.cs.jetuml.viewers.nodes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import ca.mcgill.cs.jetuml.diagram.ControlFlow;
 import ca.mcgill.cs.jetuml.diagram.Diagram;
@@ -187,11 +188,18 @@ public final class CallNodeViewer extends AbstractNodeViewer
 	}
 	
 	@Override
-	public Rectangle getBounds(Node pNode)
-	{
-		int y = getY(pNode);
-		return new Rectangle(getX(pNode), y, WIDTH, getMaxY(pNode) - y);
-	}
+ 	public Function<Node, Rectangle> createNodeBoundsCalculator() 
+ 	{
+ 		return new Function<Node, Rectangle>()
+ 		{
+ 			@Override
+ 			public Rectangle apply(Node pNode) 
+ 			{
+ 				int y = getY(pNode);
+ 				return new Rectangle(getX(pNode), y, WIDTH, getMaxY(pNode) - y);
+ 			}
+ 		};
+ 	}
 	
 	private int getYWithConstructorCall(Node pNode) 
 	{

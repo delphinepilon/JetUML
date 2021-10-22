@@ -21,6 +21,7 @@
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.geom.Direction;
@@ -39,6 +40,8 @@ public abstract class AbstractNodeViewer implements NodeViewer
 {
 	public static final int BUTTON_SIZE = 25;
 	public static final int OFFSET = 3;
+	
+	private NodeStorage aStorage = new NodeStorage();
 	
 	/* 
 	 * The default behavior for containment is to return true if the point is
@@ -108,4 +111,27 @@ public abstract class AbstractNodeViewer implements NodeViewer
 		draw(pNode, canvas.getGraphicsContext2D());
 		return canvas;
 	}
+	
+	@Override
+ 	public Rectangle getBounds(Node pNode)
+ 	{
+ 		return aStorage.getBounds(pNode, createNodeBoundsCalculator());
+ 	}
+	
+	@Override
+	public void activateNodeStorage()
+	{
+		aStorage.activate();
+	}
+	
+	@Override
+	public void deactivateNodeStorage()
+	{
+		aStorage.deactivate();
+	}
+
+ 	/**
+ 	 * @return a function to compute the bounds of a given node. 
+ 	 */
+ 	public abstract Function<Node, Rectangle> createNodeBoundsCalculator();
 }

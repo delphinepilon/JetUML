@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.FieldNode;
 import ca.mcgill.cs.jetuml.diagram.nodes.ObjectNode;
@@ -84,26 +86,33 @@ public final class ObjectNodeViewer extends AbstractNodeViewer
 	}
 	
 	@Override
-	public Rectangle getBounds(Node pNode)
-	{
-		Rectangle bounds = getTopRectangle(pNode);
-		int leftWidth = 0;
-		int rightWidth = 0;
-		int height = 0;
-		if( ((ObjectNode)pNode).getChildren().size() > 0 )
-		{
-			height = YGAP;
-		}
-		for(Node field : ((ObjectNode)pNode).getChildren())
-		{
-			height += FIELD_NODE_VIEWER.getHeight(field) + YGAP;   
-			leftWidth = Math.max(leftWidth, FIELD_NODE_VIEWER.leftWidth(field));
-			rightWidth = Math.max(rightWidth, FIELD_NODE_VIEWER.rightWidth(field));
-		}
-		int width = Math.max(bounds.getWidth(), leftWidth + rightWidth + 2 * XGAP);
-		width = Grid.toMultiple(width);
-		return new Rectangle(bounds.getX(), bounds.getY(), width, Grid.toMultiple(bounds.getHeight() + height));
-	}
+ 	public Function<Node, Rectangle> createNodeBoundsCalculator() 
+ 	{
+ 		return new Function<Node, Rectangle>()
+ 		{
+ 			@Override
+ 			public Rectangle apply(Node pNode) 
+ 			{
+ 				Rectangle bounds = getTopRectangle(pNode);
+ 				int leftWidth = 0;
+ 				int rightWidth = 0;
+ 				int height = 0;
+ 				if( ((ObjectNode)pNode).getChildren().size() > 0 )
+ 				{
+ 					height = YGAP;
+ 				}
+ 				for(Node field : ((ObjectNode)pNode).getChildren())
+ 				{
+ 					height += FIELD_NODE_VIEWER.getHeight(field) + YGAP;   
+ 					leftWidth = Math.max(leftWidth, FIELD_NODE_VIEWER.leftWidth(field));
+ 					rightWidth = Math.max(rightWidth, FIELD_NODE_VIEWER.rightWidth(field));
+ 				}
+ 				int width = Math.max(bounds.getWidth(), leftWidth + rightWidth + 2 * XGAP);
+ 				width = Grid.toMultiple(width);
+ 				return new Rectangle(bounds.getX(), bounds.getY(), width, Grid.toMultiple(bounds.getHeight() + height));
+ 			}
+ 		};
+ 	}
 	
 	/**
 	 * @param pNode The object node.

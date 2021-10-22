@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.StateNode;
 import ca.mcgill.cs.jetuml.geom.Dimension;
@@ -51,16 +53,23 @@ public final class StateNodeViewer extends AbstractNodeViewer
 	}
 	
 	@Override
-	public Rectangle getBounds(Node pNode)
-	{
-		Dimension bounds = NAME_VIEWER.getDimension(((StateNode)pNode).getName());
-		return new Rectangle(pNode.position().getX(), pNode.position().getY(), 
-				Math.max(bounds.width(), DEFAULT_WIDTH), Math.max(bounds.height(), DEFAULT_HEIGHT));
-	}
-	
-	@Override
 	public Point getConnectionPoint(Node pNode, Direction pDirection)
 	{
 		return GeomUtils.intersectRoundedRectangle(getBounds(pNode), pDirection);
+	}
+
+	@Override
+	public Function<Node, Rectangle> createNodeBoundsCalculator() 
+	{
+		return new Function<Node, Rectangle>()
+ 		{
+ 			@Override
+ 			public Rectangle apply(Node pNode) 
+ 			{
+ 				Dimension bounds = NAME_VIEWER.getDimension(((StateNode)pNode).getName());
+ 				return new Rectangle(pNode.position().getX(), pNode.position().getY(), 
+ 						Math.max(bounds.width(), DEFAULT_WIDTH), Math.max(bounds.height(), DEFAULT_HEIGHT));
+ 			}
+ 		};
 	}   	
 }

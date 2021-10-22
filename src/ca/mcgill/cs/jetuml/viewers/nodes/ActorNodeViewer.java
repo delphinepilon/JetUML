@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.ActorNode;
 import ca.mcgill.cs.jetuml.geom.Dimension;
@@ -51,16 +53,23 @@ public final class ActorNodeViewer extends AbstractNodeViewer
 	private static final int HEIGHT = HEAD_SIZE + BODY_SIZE + LEG_SIZE + PADDING * 2;
 	
 	@Override
-	public Rectangle getBounds(Node pNode)
-	{
-		Dimension nameBounds = NAME_VIEWER.getDimension(((ActorNode)pNode).getName());
-		return new Rectangle(
-				pNode.position().getX() + Math.min(0, (WIDTH - nameBounds.width()) / 2), 
-				pNode.position().getY(),
-				Math.max(WIDTH, nameBounds.width()),
-				HEIGHT + nameBounds.height()
-		);
-	}
+ 	public Function<Node, Rectangle> createNodeBoundsCalculator() 
+ 	{
+ 		return new Function<Node, Rectangle>()
+ 		{
+ 			@Override
+ 			public Rectangle apply(Node pNode) 
+ 			{
+ 				Dimension nameBounds = NAME_VIEWER.getDimension(((ActorNode)pNode).getName());
+ 				return new Rectangle(
+ 						pNode.position().getX() + Math.min(0, (WIDTH - nameBounds.width()) / 2), 
+ 						pNode.position().getY(),
+ 						Math.max(WIDTH, nameBounds.width()),
+ 						HEIGHT + nameBounds.height()
+ 				);
+ 			}
+ 		};
+ 	}
 
 	@Override
 	public void draw(Node pNode, GraphicsContext pGraphics)

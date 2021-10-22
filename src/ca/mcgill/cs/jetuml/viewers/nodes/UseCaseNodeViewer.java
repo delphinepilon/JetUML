@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.UseCaseNode;
 import ca.mcgill.cs.jetuml.geom.Direction;
@@ -52,17 +54,24 @@ public final class UseCaseNodeViewer extends AbstractNodeViewer
 	}
 	
 	@Override
-	public Rectangle getBounds(Node pNode)
-	{
-		return new Rectangle(pNode.position().getX(), pNode.position().getY(), 
-				Math.max(DEFAULT_WIDTH,  NAME_VIEWER.getDimension(((UseCaseNode)pNode).getName()).width()+
-						HORIZONTAL_NAME_PADDING), 
-				Math.max(DEFAULT_HEIGHT, NAME_VIEWER.getDimension(((UseCaseNode)pNode).getName()).height()));
-	}
-	
-	@Override
 	public Point getConnectionPoint(Node pNode, Direction pDirection)
 	{
 		return GeomUtils.intersectEllipse(getBounds(pNode), pDirection);
+	}
+
+	@Override
+	public Function<Node, Rectangle> createNodeBoundsCalculator() 
+	{
+		return new Function<Node, Rectangle>()
+ 		{
+ 			@Override
+ 			public Rectangle apply(Node pNode) 
+ 			{
+ 				return new Rectangle(pNode.position().getX(), pNode.position().getY(), 
+ 						Math.max(DEFAULT_WIDTH,  NAME_VIEWER.getDimension(((UseCaseNode)pNode).getName()).width()+
+ 								HORIZONTAL_NAME_PADDING), 
+ 						Math.max(DEFAULT_HEIGHT, NAME_VIEWER.getDimension(((UseCaseNode)pNode).getName()).height()));
+ 			}
+ 		};
 	}   	
 }
