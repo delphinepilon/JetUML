@@ -21,6 +21,7 @@
 package ca.mcgill.cs.jetuml.viewers.nodes;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.geom.Direction;
@@ -108,4 +109,15 @@ public abstract class AbstractNodeViewer implements NodeViewer
 		draw(pNode, canvas.getGraphicsContext2D());
 		return canvas;
 	}
+	
+	@Override
+ 	public Rectangle getBounds(Node pNode)
+ 	{
+ 		return NodeStorage.getBounds(pNode, createNodeBoundsCalculator());
+ 	}
+	
+	/**
+ 	 * @return a function to compute the bounds of a given node. 
+ 	 */
+ 	public abstract Function<Node, Rectangle> createNodeBoundsCalculator();
 }

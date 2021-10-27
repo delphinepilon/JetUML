@@ -22,6 +22,8 @@ package ca.mcgill.cs.jetuml.viewers.nodes;
 
 import static ca.mcgill.cs.jetuml.geom.GeomUtils.max;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.TypeNode;
 import ca.mcgill.cs.jetuml.geom.Dimension;
@@ -127,22 +129,6 @@ public class TypeNodeViewer extends AbstractNodeViewer
 		return result;
 	}
 	
-	@Override
-	public Rectangle getBounds(Node pNode)
-	{
-		assert pNode instanceof TypeNode;
-		TypeNode node = (TypeNode) pNode;
-		final int attributeHeight = attributeBoxHeight(node);
-		final int methodHeight = methodBoxHeight(node);
-		final int nameHeight = nameBoxHeight(node, attributeHeight, methodHeight);
-		Dimension nameDimension = textDimensionsBold(getNameText(node));
-		Dimension attributeDimension = textDimensions(node.getAttributes());
-		Dimension methodDimension = textDimensions(node.getMethods());
-		int width = max(DEFAULT_WIDTH, nameDimension.width(), attributeDimension.width(), methodDimension.width());
-		int height = attributeHeight + methodHeight + nameHeight;
-		return new Rectangle(node.position().getX(), node.position().getY(), width, height);
-	}
-	
 	/**
 	 * By default the name text is the name of the node.
 	 * 
@@ -154,5 +140,28 @@ public class TypeNodeViewer extends AbstractNodeViewer
 	{
 		assert pNode != null;
 		return pNode.getName();
+	}
+
+	@Override
+	public Function<Node, Rectangle> createNodeBoundsCalculator() 
+	{
+		return new Function<Node, Rectangle>()
+		{
+			@Override
+			public Rectangle apply(Node pNode) 
+			{
+				assert pNode instanceof TypeNode;
+				TypeNode node = (TypeNode) pNode;
+				final int attributeHeight = attributeBoxHeight(node);
+				final int methodHeight = methodBoxHeight(node);
+				final int nameHeight = nameBoxHeight(node, attributeHeight, methodHeight);
+				Dimension nameDimension = textDimensionsBold(getNameText(node));
+				Dimension attributeDimension = textDimensions(node.getAttributes());
+				Dimension methodDimension = textDimensions(node.getMethods());
+				int width = max(DEFAULT_WIDTH, nameDimension.width(), attributeDimension.width(), methodDimension.width());
+				int height = attributeHeight + methodHeight + nameHeight;
+				return new Rectangle(node.position().getX(), node.position().getY(), width, height);
+			}
+		};
 	}
 }

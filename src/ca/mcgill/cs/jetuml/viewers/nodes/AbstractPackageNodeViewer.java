@@ -22,6 +22,8 @@ package ca.mcgill.cs.jetuml.viewers.nodes;
 
 import static ca.mcgill.cs.jetuml.geom.GeomUtils.max;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.diagram.nodes.AbstractPackageNode;
 import ca.mcgill.cs.jetuml.geom.Dimension;
@@ -86,12 +88,19 @@ public abstract class AbstractPackageNodeViewer extends AbstractNodeViewer
 			return connectionPoint;
 		}
 	}
-
+	
 	@Override
-	public Rectangle getBounds(Node pNode)
+	public Function<Node, Rectangle> createNodeBoundsCalculator() 
 	{
-		assert pNode instanceof AbstractPackageNode;
-		return getTopBounds((AbstractPackageNode)pNode).add(getBottomBounds((AbstractPackageNode)pNode));
+		return new Function<Node, Rectangle>()
+		{
+			@Override
+			public Rectangle apply(Node pNode) 
+			{
+				assert pNode instanceof AbstractPackageNode;
+				return getTopBounds((AbstractPackageNode)pNode).add(getBottomBounds((AbstractPackageNode)pNode));
+			}
+		};
 	}
 	
 	/**
