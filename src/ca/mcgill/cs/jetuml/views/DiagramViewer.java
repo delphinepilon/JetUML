@@ -29,6 +29,7 @@ import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.diagram.Node;
 import ca.mcgill.cs.jetuml.geom.Point;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
+import ca.mcgill.cs.jetuml.viewers.edges.EdgeStorage;
 import ca.mcgill.cs.jetuml.viewers.edges.EdgeViewerRegistry;
 import ca.mcgill.cs.jetuml.viewers.nodes.NodeStorage;
 import ca.mcgill.cs.jetuml.viewers.nodes.NodeViewerRegistry;
@@ -53,9 +54,11 @@ public class DiagramViewer
 	{
 		assert pDiagram != null && pGraphics != null;
 		NodeStorage.activate();
+		EdgeStorage.activate();
 		pDiagram.rootNodes().forEach(node -> drawNode(node, pGraphics));
 		pDiagram.edges().forEach(edge -> EdgeViewerRegistry.draw(edge, pGraphics));
 		NodeStorage.deactivate();
+		EdgeStorage.deactivate();
 	}
 	
 	private void drawNode(Node pNode, GraphicsContext pGraphics)

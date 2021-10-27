@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.diagram.edges.StateTransitionEdge;
 import ca.mcgill.cs.jetuml.geom.Conversions;
@@ -391,22 +393,37 @@ public final class StateTransitionEdgeViewer extends AbstractEdgeViewer
 	}
 	
 	@Override
-	public Rectangle getBounds(Edge pEdge)
+	public Function<Edge, Rectangle> createBoundCalculator()
 	{
-		return super.getBounds(pEdge).add(Conversions.toRectangle(getLabelBounds((StateTransitionEdge)pEdge)));
+		Function<Edge, Rectangle> superBoundCalculator = super.createBoundCalculator();
+		return new Function<Edge, Rectangle>()
+		{
+			@Override
+			public Rectangle apply(Edge pEdge) 
+			{
+				return superBoundCalculator.apply(pEdge).add(Conversions.toRectangle(getLabelBounds((StateTransitionEdge)pEdge)));
+			}	
+		};
 	}
 	
 	@Override
-	public Line getConnectionPoints(Edge pEdge)
+	public Function<Edge, Line> createConnectionPointsCalculator()
 	{
-		if(isSelfEdge(pEdge))
+		return new Function<Edge, Line>()
 		{
-			return getSelfEdgeConnectionPoints(pEdge);
-		}
-		else
-		{
-			return getNormalEdgeConnectionsPoints(pEdge);
-		}
+			@Override
+			public Line apply(Edge pEdge) 
+			{
+				if(isSelfEdge(pEdge))
+				{
+					return getSelfEdgeConnectionPoints(pEdge);
+				}
+				else
+				{
+					return getNormalEdgeConnectionsPoints(pEdge);
+				}
+			}
+		};
 	}
 	
 	/*

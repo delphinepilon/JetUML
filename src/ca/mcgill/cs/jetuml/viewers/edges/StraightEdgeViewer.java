@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.geom.Conversions;
 import ca.mcgill.cs.jetuml.geom.Line;
@@ -67,16 +69,24 @@ public class StraightEdgeViewer extends AbstractEdgeViewer
 	}
 	
 	@Override
-	public Rectangle getBounds(Edge pEdge)
+	public Function<Edge, Rectangle> createBoundCalculator()
 	{
-		Rectangle bounds = super.getBounds(pEdge);
-		if( aArrowHead != ArrowHead.NONE )
+		Function<Edge, Rectangle> superBoundCalculator = super.createBoundCalculator();
+		return new Function<Edge, Rectangle>()
 		{
-			Line connectionPoints = getConnectionPoints(pEdge);
-			bounds = bounds.add(Conversions.toRectangle(aArrowHead.view().getPath(connectionPoints.getPoint1(), 
-					connectionPoints.getPoint2()).getBoundsInLocal()));
-		}
-		return bounds;
+			@Override
+			public Rectangle apply(Edge pEdge) 
+			{
+				Rectangle bounds = superBoundCalculator.apply(pEdge);
+				if( aArrowHead != ArrowHead.NONE )
+				{
+					Line connectionPoints = getConnectionPoints(pEdge);
+					bounds = bounds.add(Conversions.toRectangle(aArrowHead.view().getPath(connectionPoints.getPoint1(), 
+							connectionPoints.getPoint2()).getBoundsInLocal()));
+				}
+				return bounds;
+			}
+		};
 	}
 	
 	@Override

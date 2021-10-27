@@ -21,6 +21,7 @@
 package ca.mcgill.cs.jetuml.viewers.edges;
 
 import java.util.ArrayList;
+import java.util.function.Function;
 
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.diagram.Node;
@@ -78,11 +79,18 @@ public final class CallEdgeViewer extends AbstractEdgeViewer
 	}
 	
 	@Override
-	public Line getConnectionPoints(Edge pEdge)
+	public Function<Edge, Line> createConnectionPointsCalculator()
 	{
-		Point[] points = getPoints(pEdge);
-		assert points.length >= 2;
-		return new Line(points[0], points[points.length-1]);
+		return new Function<Edge, Line>()
+		{
+			@Override
+			public Line apply(Edge pEdge) 
+			{
+				Point[] points = getPoints(pEdge);
+				assert points.length >= 2;
+				return new Line(points[0], points[points.length-1]);
+			}
+		};
 	}
 	
 	private ArrowHeadView getArrowHeadView(CallEdge pEdge)
@@ -98,18 +106,26 @@ public final class CallEdgeViewer extends AbstractEdgeViewer
 	}
 	
 	@Override
-	public Rectangle getBounds(Edge pEdge)
+	public Function<Edge, Rectangle> createBoundCalculator()
 	{
-		Rectangle bounds = super.getBounds(pEdge);
-		Line connectionPoints = getConnectionPoints(pEdge);
-		bounds = bounds.add(Conversions.toRectangle(getArrowHeadView((CallEdge)pEdge).getPath(connectionPoints.getPoint1(), 
-					connectionPoints.getPoint2()).getBoundsInLocal()));
-		final String label = ((CallEdge)pEdge).getMiddleLabel();
-		if( label.length() > 0 )
+		Function<Edge, Rectangle> superBoundCalculator = super.createBoundCalculator();
+		return new Function<Edge, Rectangle>()
 		{
-			bounds = bounds.add(getStringBounds((CallEdge)pEdge));
-		}
-		return bounds;
+			@Override
+			public Rectangle apply(Edge pEdge) 
+			{
+				Rectangle bounds = superBoundCalculator.apply(pEdge);
+				Line connectionPoints = getConnectionPoints(pEdge);
+				bounds = bounds.add(Conversions.toRectangle(getArrowHeadView((CallEdge)pEdge).getPath(connectionPoints.getPoint1(), 
+							connectionPoints.getPoint2()).getBoundsInLocal()));
+				final String label = ((CallEdge)pEdge).getMiddleLabel();
+				if( label.length() > 0 )
+				{
+					bounds = bounds.add(getStringBounds((CallEdge)pEdge));
+				}
+				return bounds;
+			}
+		};
 	}
 
 	@Override

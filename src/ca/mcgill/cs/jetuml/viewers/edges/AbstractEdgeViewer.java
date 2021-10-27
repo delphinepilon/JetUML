@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.geom.Dimension;
 import ca.mcgill.cs.jetuml.geom.Direction;
@@ -95,8 +97,13 @@ public abstract class AbstractEdgeViewer implements EdgeViewer
 	@Override
 	public Rectangle getBounds(Edge pEdge)
 	{
-		Bounds bounds = getShape(pEdge).getBoundsInLocal();
-		return new Rectangle((int)bounds.getMinX(), (int)bounds.getMinY(), (int)bounds.getWidth(), (int)bounds.getHeight());
+		return EdgeStorage.getBounds(pEdge, createBoundCalculator());
+	}
+	
+	@Override
+	public Line getConnectionPoints(Edge pEdge)
+	{
+		return EdgeStorage.getConnectionPoints(pEdge, createConnectionPointsCalculator());
 	}
 	
 	/*
@@ -106,21 +113,40 @@ public abstract class AbstractEdgeViewer implements EdgeViewer
 	 * following a straight line connecting the center
 	 * of the rectangular bounds for each node.
 	 */
-	@Override
-	public Line getConnectionPoints(Edge pEdge)
+	public Function<Edge, Line> createConnectionPointsCalculator()
 	{
-		Rectangle startBounds = NodeViewerRegistry.getBounds(pEdge.getStart());
-		Rectangle endBounds = NodeViewerRegistry.getBounds(pEdge.getEnd());
-		Point startCenter = startBounds.getCenter();
-		Point endCenter = endBounds.getCenter();
-		Direction toEnd = Direction.fromLine(startCenter, endCenter);
-		return new Line(NodeViewerRegistry.getConnectionPoints(pEdge.getStart(), toEnd), 
-				NodeViewerRegistry.getConnectionPoints(pEdge.getEnd(), toEnd.rotatedBy(DEGREES_180)));
+		return new Function<Edge, Line>()
+		{
+			@Override
+			public Line apply(Edge pEdge) 
+			{
+				Rectangle startBounds = NodeViewerRegistry.getBounds(pEdge.getStart());
+				Rectangle endBounds = NodeViewerRegistry.getBounds(pEdge.getEnd());
+				Point startCenter = startBounds.getCenter();
+				Point endCenter = endBounds.getCenter();
+				Direction toEnd = Direction.fromLine(startCenter, endCenter);
+				return new Line(NodeViewerRegistry.getConnectionPoints(pEdge.getStart(), toEnd), 
+						NodeViewerRegistry.getConnectionPoints(pEdge.getEnd(), toEnd.rotatedBy(DEGREES_180)));
+			}
+		};
 	}
 
 	@Override
 	public void drawSelectionHandles(Edge pEdge, GraphicsContext pGraphics)
 	{
 		ToolGraphics.drawHandles(pGraphics, getConnectionPoints(pEdge));		
+	}
+	
+	public Function<Edge, Rectangle> createBoundCalculator()
+	{
+		return new Function<Edge, Rectangle>()
+		{
+			@Override
+			public Rectangle apply(Edge pEdge) 
+			{
+				Bounds bounds = getShape(pEdge).getBoundsInLocal();
+				return new Rectangle((int)bounds.getMinX(), (int)bounds.getMinY(), (int)bounds.getWidth(), (int)bounds.getHeight());
+			}
+		};
 	}
 }

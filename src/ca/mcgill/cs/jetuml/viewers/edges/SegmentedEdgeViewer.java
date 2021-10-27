@@ -201,13 +201,20 @@ public class SegmentedEdgeViewer extends AbstractEdgeViewer
 	{
 		return aStyle.getPath(pEdge);
 	}
-
+	
 	@Override
-	public Line getConnectionPoints(Edge pEdge)
+	public Function<Edge, Line> createConnectionPointsCalculator()
 	{
-		Point2D[] points = getPoints(pEdge);
-		return new Line(Conversions.toPoint(points[0]), 
-				Conversions.toPoint(points[points.length - 1]));
+		return new Function<Edge, Line>()
+		{
+			@Override
+			public Line apply(Edge pEdge) 
+			{
+				Point2D[] points = getPoints(pEdge);
+				return new Line(Conversions.toPoint(points[0]), 
+						Conversions.toPoint(points[points.length - 1]));
+			}
+		};
 	}
 	
 	@Override
@@ -265,17 +272,25 @@ public class SegmentedEdgeViewer extends AbstractEdgeViewer
 	}
 	
 	@Override
-	public Rectangle getBounds(Edge pEdge)
+	public Function<Edge, Rectangle> createBoundCalculator()
 	{
-		Point2D[] points = getPoints(pEdge);
-		Rectangle bounds = super.getBounds(pEdge);
-		bounds = bounds.add(getStringBounds(points[1], points[0], 
-				aArrowStartExtractor.apply(pEdge), aStartLabelExtractor.apply(pEdge), false));
-		bounds = bounds.add(getStringBounds(points[points.length / 2 - 1], 
-				points[points.length / 2], null, aMiddleLabelExtractor.apply(pEdge), true));
-		bounds = bounds.add(getStringBounds(points[points.length - 2], points[points.length - 1], 
-				aArrowEndExtractor.apply(pEdge), aEndLabelExtractor.apply(pEdge), false));
-		return bounds;
+		Function<Edge, Rectangle> superBoundCalculator = super.createBoundCalculator();
+		return new Function<Edge, Rectangle>()
+		{
+			@Override
+			public Rectangle apply(Edge pEdge) 
+			{
+				Point2D[] points = getPoints(pEdge);
+				Rectangle bounds = superBoundCalculator.apply(pEdge);
+				bounds = bounds.add(getStringBounds(points[1], points[0], 
+						aArrowStartExtractor.apply(pEdge), aStartLabelExtractor.apply(pEdge), false));
+				bounds = bounds.add(getStringBounds(points[points.length / 2 - 1], 
+						points[points.length / 2], null, aMiddleLabelExtractor.apply(pEdge), true));
+				bounds = bounds.add(getStringBounds(points[points.length - 2], points[points.length - 1], 
+						aArrowEndExtractor.apply(pEdge), aEndLabelExtractor.apply(pEdge), false));
+				return bounds;
+			}
+		};
 	}
 	
 	@Override

@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.diagram.edges.ReturnEdge;
 import ca.mcgill.cs.jetuml.diagram.nodes.PointNode;
@@ -51,23 +53,30 @@ public final class ReturnEdgeViewer extends LabeledStraightEdgeViewer
 	}
 	
 	@Override
-	public Line getConnectionPoints(Edge pEdge)
+	public Function<Edge, Line> createConnectionPointsCalculator()
 	{
-		Rectangle start = NodeViewerRegistry.getBounds(pEdge.getStart());
-		Rectangle end = NodeViewerRegistry.getBounds(pEdge.getEnd());
-		
-		if(pEdge.getEnd() instanceof PointNode) // show nicely in tool bar
+		return new Function<Edge, Line>()
 		{
-			return new Line(new Point(end.getX(), end.getY()), new Point(start.getMaxX(), end.getY()));
-		}      
-		else if(start.getCenter().getX() < end.getCenter().getX())
-		{
-			return new Line(new Point(start.getMaxX(), start.getMaxY()), new Point(end.getX(), start.getMaxY()));
-		}
-		else
-		{
-			return new Line(new Point(start.getX(), start.getMaxY()), new Point(end.getMaxX(), start.getMaxY()));
-		}
+			@Override
+			public Line apply(Edge pEdge) 
+			{
+				Rectangle start = NodeViewerRegistry.getBounds(pEdge.getStart());
+				Rectangle end = NodeViewerRegistry.getBounds(pEdge.getEnd());
+				
+				if(pEdge.getEnd() instanceof PointNode) // show nicely in tool bar
+				{
+					return new Line(new Point(end.getX(), end.getY()), new Point(start.getMaxX(), end.getY()));
+				}      
+				else if(start.getCenter().getX() < end.getCenter().getX())
+				{
+					return new Line(new Point(start.getMaxX(), start.getMaxY()), new Point(end.getX(), start.getMaxY()));
+				}
+				else
+				{
+					return new Line(new Point(start.getX(), start.getMaxY()), new Point(end.getMaxX(), start.getMaxY()));
+				}
+			}
+		};
 	}
 	
 	@Override

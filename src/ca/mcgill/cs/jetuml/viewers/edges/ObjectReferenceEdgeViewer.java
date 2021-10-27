@@ -20,6 +20,8 @@
  *******************************************************************************/
 package ca.mcgill.cs.jetuml.viewers.edges;
 
+import java.util.function.Function;
+
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.geom.Direction;
 import ca.mcgill.cs.jetuml.geom.Line;
@@ -126,19 +128,26 @@ public final class ObjectReferenceEdgeViewer extends AbstractEdgeViewer
 					new Point(connectionPoints.getX2(), connectionPoints.getY2()));      
 		}
 	}
-
+	
 	@Override
-	public Line getConnectionPoints(Edge pEdge)
+	public Function<Edge, Line> createConnectionPointsCalculator()
 	{
-		Point point = NodeViewerRegistry.getConnectionPoints(pEdge.getStart(), Direction.EAST);
-		if (isSShaped(pEdge))
+		return new Function<Edge, Line>()
 		{
-			return new Line(point, NodeViewerRegistry.getConnectionPoints(pEdge.getEnd(), Direction.WEST));
-		}
-		else
-		{
-			return new Line(point, NodeViewerRegistry.getConnectionPoints(pEdge.getEnd(), Direction.EAST));
-		}
+			@Override
+			public Line apply(Edge pEdge) 
+			{
+				Point point = NodeViewerRegistry.getConnectionPoints(pEdge.getStart(), Direction.EAST);
+				if (isSShaped(pEdge))
+				{
+					return new Line(point, NodeViewerRegistry.getConnectionPoints(pEdge.getEnd(), Direction.WEST));
+				}
+				else
+				{
+					return new Line(point, NodeViewerRegistry.getConnectionPoints(pEdge.getEnd(), Direction.EAST));
+				}
+			}
+		};
 	}
 	
 	@Override

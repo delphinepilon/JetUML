@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.function.Function;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ca.mcgill.cs.jetuml.diagram.Node;

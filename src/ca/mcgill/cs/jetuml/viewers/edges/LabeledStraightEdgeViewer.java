@@ -79,14 +79,22 @@ public class LabeledStraightEdgeViewer extends StraightEdgeViewer
 	}
 	
 	@Override
-	public Rectangle getBounds(Edge pEdge)
+	public Function<Edge, Rectangle> createBoundCalculator()
 	{
-		Rectangle bounds = super.getBounds(pEdge);
-		String label = aLabelExtractor.apply(pEdge);
-		if( label.length() > 0 )
+		Function<Edge, Rectangle> superBoundCalculator = super.createBoundCalculator();
+		return new Function<Edge, Rectangle>()
 		{
-			bounds = bounds.add(getStringBounds(pEdge));
-		}
-		return bounds;
+			@Override
+			public Rectangle apply(Edge pEdge) 
+			{
+				Rectangle bounds = superBoundCalculator.apply(pEdge);
+				String label = aLabelExtractor.apply(pEdge);
+				if( label.length() > 0 )
+				{
+					bounds = bounds.add(getStringBounds(pEdge));
+				}
+				return bounds;
+			}
+		};
 	}
 }
