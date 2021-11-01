@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import ca.mcgill.cs.jetuml.diagram.Edge;
 import ca.mcgill.cs.jetuml.diagram.edges.NoteEdge;
+import ca.mcgill.cs.jetuml.geom.Line;
+import ca.mcgill.cs.jetuml.geom.Point;
 import ca.mcgill.cs.jetuml.geom.Rectangle;
 
 public class TestEdgeStorage 
@@ -45,6 +47,39 @@ public class TestEdgeStorage
 		assertSame(boundsA, boundsB);
 		EdgeStorage.deactivate();
 	}
+	
+	@Test
+	public void testGetConnectionPointsReturnsDifferentBoundsWhenEdgeStorageIsNotActive()
+	{
+		EdgeStorage.deactivate();
+		Edge edge = new NoteEdge();
+		Line cnxPtsA = EdgeStorage.getConnectionPoints(edge, createDefaultConnectionPointsCalculator());
+		Line cnxPtsB = EdgeStorage.getConnectionPoints(edge, createDefaultConnectionPointsCalculator());
+		assertNotSame(cnxPtsA, cnxPtsB);
+	}
+	
+	@Test
+	public void testGetConnectionPointsReturnsDifferentBoundsForDifferentEdgesWhenEdgeStorageIsActive()
+	{
+		EdgeStorage.activate();
+		Edge edge1 = new NoteEdge();
+		Edge edge2 = new NoteEdge();
+		Line cnxPtsA = EdgeStorage.getConnectionPoints(edge1, createDefaultConnectionPointsCalculator());
+		Line cnxPtsB = EdgeStorage.getConnectionPoints(edge2, createDefaultConnectionPointsCalculator());
+		assertNotSame(cnxPtsA, cnxPtsB);
+		EdgeStorage.deactivate();
+	}
+	
+	@Test
+	public void testGetConnectionPointsReturnsSameBoundsForSameEdgeWhenEdgeStorageIsActive()
+	{
+		EdgeStorage.activate();
+		Edge edge = new NoteEdge();
+		Line cnxPtsA = EdgeStorage.getConnectionPoints(edge, createDefaultConnectionPointsCalculator());
+		Line cnxPtsB = EdgeStorage.getConnectionPoints(edge, createDefaultConnectionPointsCalculator());
+		assertSame(cnxPtsA, cnxPtsB);
+		EdgeStorage.deactivate();
+	}
 
 	private Function<Edge, Rectangle> createDefaultBoundCalculator() 
 	{
@@ -58,4 +93,15 @@ public class TestEdgeStorage
 		};
 	}
 
+	private Function<Edge, Line> createDefaultConnectionPointsCalculator() 
+	{
+		return new Function<Edge, Line>()
+		{
+			@Override
+			public Line apply(Edge pEdge) 
+			{
+				return new Line(new Point(0, 0), new Point(100, 100));
+			}
+		};
+	}
 }
