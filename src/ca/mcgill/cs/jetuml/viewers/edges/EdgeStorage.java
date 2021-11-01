@@ -70,5 +70,6 @@ public class EdgeStorage
 	{
 		aIsActivated = false;
 		aEdgeBounds.clear();
+		aEdgeConnectionPoints.clear();
 	}
 }
